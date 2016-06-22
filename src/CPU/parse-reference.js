@@ -28,7 +28,12 @@ for(var i = 0; i < reference.length; ++i) {
 // remove car
 instructions = instructions.slice(1);
 
-console.log(instructions.map(parseInstruction));
+var opcodes = [];
+for(var i = 0; i < instructions.length; ++i) {
+    opcodes = opcodes.concat(parseInstruction(instructions[i]));
+}
+
+console.log(opcodes);
 
 function parseInstruction(instruction) {
     // get instruction name
@@ -42,9 +47,9 @@ function parseInstruction(instruction) {
     var forms = instruction.slice(nums + 1, -2).map(function(form) {
         var addressing = form.slice(6-1, 20-1).trim();
         var assembler = form.slice(20-1, 34-1).trim();
-        var opcode = form.slice(34-1, 40-1).trim();
+        var opcode = ("0x" + form.slice(34-1, 40-1).trim()) * 1;
         var size = form.slice(40-1, 46-1) * 1;
-        var cycles = form.slice(46-1) * 1;
+        var cycles = form.slice(46-1).trim();
 
         return {
             "name": name,
