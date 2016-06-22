@@ -28,12 +28,21 @@ for(var i = 0; i < reference.length; ++i) {
 // remove car
 instructions = instructions.slice(1);
 
+// parse instructions individually
 var opcodes = [];
 for(var i = 0; i < instructions.length; ++i) {
     opcodes = opcodes.concat(parseInstruction(instructions[i]));
 }
 
-console.log(opcodes);
+// sort by opcode
+var table = [];
+for(var j = 0; j < 256; ++j) { table.push(null); }
+
+opcodes.forEach(function(opcode) {
+    table[opcode.opcode] = opcode;
+});
+
+console.log(table);
 
 function parseInstruction(instruction) {
     // get instruction name
