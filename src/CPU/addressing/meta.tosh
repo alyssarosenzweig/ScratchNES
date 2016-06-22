@@ -1,0 +1,55 @@
+define mapper read (location)
+set M to 255
+
+define immediate
+mapper read PC+1
+
+define zeropage
+mapper read PC+1
+mapper read M
+
+define zeropageX
+mapper read PC+1
+mapper read M + X mod 256
+
+define zeropageY
+mapper read PC+1
+mapper read M + Y mod 256
+
+define absolute
+mapper read PC+1
+set tmp to M
+mapper read PC+2
+mapper read tmp * 256 + M
+
+define absoluteX
+mapper read PC+1
+set tmp to M
+mapper read PC+2
+mapper read tmp * 256 + M + X
+
+define absoluteY
+mapper read PC+1
+set tmp to M
+mapper read PC+2
+mapper read tmp * 256 + M + Y
+
+define implied
+
+define indirect
+mapper read PC+1
+set tmp to M
+mapper read PC+2
+mapper read tmp * 256 + M
+set tmp2 to M
+mapper read tmp * 256 + M + 1
+mapper read tmp2 * 256 + M
+
+define indirectX
+mapper read PC+1
+mapper read (M + X) mod 256
+
+define indirectY
+mapper read PC+1
+mapper read M
+mapper read M + Y + flagC
