@@ -1,0 +1,4 @@
+mapper read PC+1
+set tmp to M
+mapper read PC+2
+mapper read tmp * 256 + M + X
