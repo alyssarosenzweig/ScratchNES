@@ -41,9 +41,21 @@ function parseInstruction(instruction) {
         return el.indexOf("---------") > -1;
     });
 
+    var forms = instruction.slice(nums + 1, -2).map(function(form) {
+        return [
+                form.slice(6-1, 20-1),
+                form.slice(20-1, 34-1),
+                form.slice(34-1, 40-1),
+                form.slice(40-1, 46-1),
+                form.slice(46-1)
+            ].map(function(x) { return x.trim(); });
+    });
+
+    console.log(forms);
+
     return {
         "name": name,
-        "forms": instruction.slice(nums + 1, -2)
+        "forms": forms
     };
 }
 
