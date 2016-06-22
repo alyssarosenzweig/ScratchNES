@@ -30,8 +30,6 @@ instructions = instructions.slice(1);
 
 console.log(instructions.map(parseInstruction));
 
-var bar = '     --------------------------------------------';
-
 function parseInstruction(instruction) {
     // get instruction name
     var name = instruction[0].split(" ")[0];
@@ -42,21 +40,22 @@ function parseInstruction(instruction) {
     });
 
     var forms = instruction.slice(nums + 1, -2).map(function(form) {
-        return [
-                form.slice(6-1, 20-1),
-                form.slice(20-1, 34-1),
-                form.slice(34-1, 40-1),
-                form.slice(40-1, 46-1),
-                form.slice(46-1)
-            ].map(function(x) { return x.trim(); });
+        var addressing = form.slice(6-1, 20-1).trim();
+        var assembler = form.slice(20-1, 34-1).trim();
+        var opcode = form.slice(34-1, 40-1).trim();
+        var size = form.slice(40-1, 46-1) * 1;
+        var cycles = form.slice(46-1) * 1;
+
+        return {
+            "name": name,
+            "addressing": addressing,
+            "size": size,
+            "opcode": opcode,
+            "cycles": cycles
+        };
     });
 
-    console.log(forms);
-
-    return {
-        "name": name,
-        "forms": forms
-    };
+    return forms;
 }
 
 function PolyFill() {
