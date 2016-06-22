@@ -42,7 +42,7 @@ opcodes.forEach(function(opcode) {
     table[opcode.opcode] = opcode;
 });
 
-console.log(table);
+fs.writeFileSync("bin/table.json", JSON.stringify(table));
 
 function parseInstruction(instruction) {
     // get instruction name
