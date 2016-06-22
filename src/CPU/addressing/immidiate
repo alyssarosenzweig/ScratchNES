@@ -1,1 +1,1 @@
-mapper read PC+1
+set address to PC+1

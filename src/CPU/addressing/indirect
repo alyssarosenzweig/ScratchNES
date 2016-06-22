@@ -4,4 +4,4 @@ mapper read PC+2
 mapper read tmp * 256 + M
 set tmp2 to M
 mapper read tmp * 256 + M + 1
-mapper read tmp2 * 256 + M
+set address to tmp2 * 256 + M
