@@ -1,0 +1,3 @@
+RW, Z
+set flagC to OP mod 2
+set OP to floor of (join "0x" (OP)) / 2
