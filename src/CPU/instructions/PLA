@@ -1,4 +1,4 @@
 IMPLIED, N, Z, A
 mapper read (257 + S)
 set S to (S + 1) mod 256
-set A to OP
+set A to M

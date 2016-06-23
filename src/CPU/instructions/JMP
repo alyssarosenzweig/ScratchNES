@@ -1,2 +1,2 @@
 RAW
-set PC to OP
+set PC to (join "0x" (OP))

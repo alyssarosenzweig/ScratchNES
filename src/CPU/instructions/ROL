@@ -1,4 +1,4 @@
 RW, N, Z
 set tmp to <(join "0x" (letter 1 of OP)) > 7>
-set OP to OP * 2 + flagC
+set OP to item ((join "0x" (OP)) * 2 + flagC) of hex
 set flagC to tmp

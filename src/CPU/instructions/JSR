@@ -1,7 +1,7 @@
 RAW
-set tmp to (join "0x" (PC)) + 2
+set tmp to PC + 2
 mapper write (256 + S) ( (tmp - (tmp mod 256)) / 256)
 set S to (S - 1) mod 256
 mapper write (256 + S) (tmp mod 256)
 set S to (S - 1) mod 256
-set PC to OP
+set PC to (join "0x" (OP))
