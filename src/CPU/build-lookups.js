@@ -8,6 +8,7 @@ var fs = require("fs");
 emit("EOR", function(a,b){return a^b});
 emit("ORA", function(a,b){return a|b});
 emit("AND", function(a,b){return a&b});
+emit("hex", function(a,b){return ((a<<4)|b).toString(16)});
 
 function emit(name, func) {
     var emission = [];

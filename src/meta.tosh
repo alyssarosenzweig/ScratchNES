@@ -1,38 +1,55 @@
-define mapper read (address)
-if address < 8192 then
-    set M to item (address mod 2048) of RAM
+define mapper read (addr)
+if addr < 8192 then
+	set M to item (addr mod 2048) + 1 of RAM
 else
-    if address > 8000 then
-        set M to item (address mod 16384) of PRG-ROM
-    end
+	if addr > 32767 then
+		set M to item ((addr - 32768) mod 16384) + 1 of PRG-ROM
+	end
 end
 
-define mapper write (address) (value)
-if address < 8192 then
-    replace item (address mod 2048) of RAM with value
+define mapper write (addr) (value)
+if addr < 8192 then
+	replace item (addr mod 2048) + 1 of RAM with value
 else
-    if address > 8000 then
-        say "Writing to ROM isn't very nice, you know..."
-    end
+	if addr > 32768 then
+		say "Writing to ROM isn't very nice, you know..."
+	end
 end
+
+define PLP
 
 define interrupt
 
 define compute SR
 
+define load
+delete all of PRG-ROM
+repeat 32768
+	add 0 to PRG-ROM
+end
+replace item 1 of PRG-ROM with "0xA9"
+replace item 2 of PRG-ROM with "0x42"
+replace item 3 of PRG-ROM with "0x09"
+replace item 4 of PRG-ROM with "0x12"
+
 when flag clicked
 set A to 0
 set X to 0
 set Y to 0
-set PC to 0
+set PC to 32768
+show variable A
+show variable X
+show variable Y
+show variable PC
+show variable M
 delete all of RAM
 repeat 2048
-    add 0 to RAM
+	add 0 to RAM
 end
+load
 
 when p key pressed
 mapper read PC
 interpret instruction (M)
 
 define interpret instruction (opcode)
-
