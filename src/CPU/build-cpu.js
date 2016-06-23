@@ -62,9 +62,17 @@ var sources = table.map(function(x, i) {
                 console.error("Unknown flag " + flag + " for instruction " + x.name);
         });
 
+        var ins = insruction_cache[x.name];
+
         if(mode == "R") {
             instruction.push("mapper read address");
             instruction.push("set OP to M");
+        } else if(mode == "RW") {
+            instruction.push("mapper read address");
+            instruction.push("set OP to M");
+            ins = ins.map(function(q) {
+                return q.replace(/set OP to/, "mapper write address");
+            });
         } else if(mode == "IMPLIED") {
 
         } else {
