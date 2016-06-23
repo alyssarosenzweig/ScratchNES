@@ -3,7 +3,7 @@ if addr < 8192 then
 	set M to item (addr mod 2048) + 1 of RAM
 else
 	if addr > 32767 then
-		set M to item ((addr - 32768) mod 16384) + 1 of PRG-ROM
+		set M to join "0x" (item ((addr - 32768) mod 16384) + 1 of PRG-ROM)
 	end
 end
 
@@ -22,34 +22,32 @@ define interrupt
 
 define compute SR
 
-define load
-delete all of PRG-ROM
-repeat 32768
-	add 0 to PRG-ROM
-end
-replace item 1 of PRG-ROM with "0xA9"
-replace item 2 of PRG-ROM with "0x42"
-replace item 3 of PRG-ROM with "0x09"
-replace item 4 of PRG-ROM with "0x12"
-
 when flag clicked
 set A to 0
 set X to 0
 set Y to 0
-set PC to 32768
+set S to "0xFD"
+set PC to 49152
 show variable A
 show variable X
 show variable Y
 show variable PC
 show variable M
+show variable flagC
+show variable flagV
+show variable flagN
+show variable flagZ
+show variable flagI
+show variable flagB
+show variable flagD
+show variable S
 delete all of RAM
 repeat 2048
 	add 0 to RAM
 end
-load
 
 when p key pressed
 mapper read PC
-interpret instruction (M)
+interpret instruction M
 
 define interpret instruction (opcode)
