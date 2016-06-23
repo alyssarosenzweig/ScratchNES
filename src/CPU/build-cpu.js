@@ -20,7 +20,7 @@ var emission = [
     "set opcode to M"
 ];
 
-table = table.slice(0, 4);
+table = table.slice(0, 16);
 
 var sources = table.map(function(x, i) {
     if(x) {
@@ -62,16 +62,27 @@ var sources = table.map(function(x, i) {
                 console.error("Unknown flag " + flag + " for instruction " + x.name);
         });
 
-        var ins = insruction_cache[x.name].slice(1);
+        var ins = instruction_cache[x.name].slice(1);
 
         if(mode == "R") {
             instruction.push("mapper read address");
             instruction.push("set OP to M");
         } else if(mode == "RW") {
-            instruction.push("mapper read address");
-            instruction.push("set OP to M");
+            if(x.addressing == "accumulator") {
+                ins = ins.map(function(q) {
+                    return q.replace(/OP/g, "A");
+                });
+            } else {
+                instruction.push("mapper read address");
+                instruction.push("set OP to M");
+            }
+
             ins = ins.map(function(q) {
-                return q.replace(/set OP to/, "mapper write address");
+                if(x.addressing != "accumulator") {
+                    return q.replace(/set OP to/, "mapper write address");
+                } else {
+                    return q;
+                }
             });
         } else if(mode == "IMPLIED") {
 
@@ -97,7 +108,7 @@ var sources = table.map(function(x, i) {
 });
 
 // dump out an 8 level deep BST
-console.log(bst(sources, 0, 3).join('\n'));
+console.log(bst(sources, 0, 15).join('\n'));
 
 function bst(sources, start, end) {
     if(start == end)
