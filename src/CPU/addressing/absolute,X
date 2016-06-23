@@ -1,4 +1,5 @@
 mapper read PC+1
 set tmp to M
 mapper read PC+2
-set address to tmp * 256 + M + X
+set address to ((join "0x" (tmp)) * 256) + (join "0x" (M)) + (join "0x" (X))
+set address to join (item ((address - (address mod 256))/256)+1 of hex) (item (address mod 256)+1 of hex)

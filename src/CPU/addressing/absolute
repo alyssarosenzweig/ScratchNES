@@ -1,4 +1,4 @@
 mapper read PC+1
 set tmp to M
 mapper read PC+2
-set address to tmp * 256 + M
+set address to join (tmp) (M)

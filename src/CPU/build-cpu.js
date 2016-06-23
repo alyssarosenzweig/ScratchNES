@@ -20,6 +20,8 @@ var emission = [
     "set tmp to join \"0x\" (M)"
 ];
 
+table = table.slice(0, 4);
+
 var sources = table.map(function(x, i) {
     if(x) {
         var instruction = [];

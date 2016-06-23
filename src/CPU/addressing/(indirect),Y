@@ -1,3 +1,3 @@
 mapper read PC+1
-mapper read M
-set address to M + Y + flagC
+mapper read (join "0x" M)
+set address to (join "0x" M) + (join "0x" Y) + flagC
