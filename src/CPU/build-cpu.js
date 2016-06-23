@@ -83,6 +83,10 @@ var sources = table.map(function(x, i) {
                     return q;
                 }
             });
+        } else if(mode == "W") {
+            ins = ins.map(function(q) {
+                return q.replace(/set OP to/, "mapper write address");
+            });
         } else if(mode == "RAW") {
             ins = ins.map(function(q) {
                 return q.replace(/OP/g, "address");
