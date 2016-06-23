@@ -47,7 +47,7 @@ var sources = table.map(function(x, i) {
 
         // follow the flags
         var flags = instruction_cache[x.name][0].replace(/ /g, '').split(',');
-        var negQ = false, zeroQ = false, mode = null, operand = null;
+        var negQ = false, zeroQ = false, carryQ = false, mode = null, operand = null;
 
         flags.forEach(function(flag) {
             if(flag == "N") negQ = true;
@@ -106,6 +106,10 @@ var sources = table.map(function(x, i) {
 
         if(zeroQ) {
             instruction.push("set flagZ to <" + operand + " = 0>");
+        }
+
+        if(carryQ) {
+            instruction.push("set flagC to <" + operand + " > 255 or " + operand + " < 0>");
         }
 
         instruction = instruction.concat([
