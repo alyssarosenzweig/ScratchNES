@@ -32,7 +32,7 @@ function emit(name, flag, value) {
             " * (M + 256 * (<M < 128> - 1))"
     );
 
-    console.log(name);
+    fs.writeFileSync("instructions/" + name, emission.join("\n"));
 }
 
 for(var flag in branches) {
