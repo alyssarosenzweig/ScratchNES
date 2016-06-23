@@ -2,4 +2,4 @@ R,N,Z,A
 set tmp to A + OP + flagC
 set A to tmp mod 256
 set flagC to <tmp > 255>
-set flagV to <A < 128 and OP < 128 and (tmp mod 256) > 128> or <A > 127 and OP > 127 and (tmp mod 256) < 128>>
+set flagV to <<A < 128 and OP < 128 and (tmp mod 256) > 128> or <A > 127 and OP > 127 and (tmp mod 256) < 128>>
