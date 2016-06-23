@@ -22,12 +22,12 @@ var emission = [
 var sources = table.map(function(x, i) {
     if(x) {
         return [
-            'say "' + x.assembly + '" for 2 seconds',
+            'say "' + x.assembler + '" for 2 secs',
             'change PC by ' + x.size
         ].join("\n");
     } else {
         return [
-            'say "Illegal Opcode ' + i + ' used, ignoring." for 2 seconds',
+            'say "Illegal Opcode ' + i + ' used, ignoring." for 2 secs',
             'change PC by 1'
         ].join("\n");
     }
