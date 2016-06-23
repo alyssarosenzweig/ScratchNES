@@ -32,7 +32,7 @@ function emit(name, flag, value) {
             " * (M + 256 * (<M < 128> - 1))"
     );
 
-    console.log(emission.join("\n"));
+    console.log(name);
 }
 
 for(var flag in branches) {
