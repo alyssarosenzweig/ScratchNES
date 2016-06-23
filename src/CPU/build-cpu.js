@@ -83,7 +83,11 @@ var sources = table.map(function(x, i) {
                     return q;
                 }
             });
-        } else if(mode == "IMPLIED") {
+        } else if(mode == "RAW") {
+            ins = ins.map(function(q) {
+                return q.replace(/OP/g, "address");
+            });
+        } else if(mode == "IMPLIED" || mode == "BRANCH") {
 
         } else {
             console.error("Unsupported mode " + mode);
