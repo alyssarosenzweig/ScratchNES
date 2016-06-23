@@ -1,0 +1,4 @@
+RW, N, Z
+set tmp to <(join "0x" (letter 1 of OP)) > 7>
+set OP to OP * 2 + flagC
+set flagC to tmp
