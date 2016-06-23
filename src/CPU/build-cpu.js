@@ -52,7 +52,8 @@ var sources = table.map(function(x, i) {
         flags.forEach(function(flag) {
             if(flag == "N") negQ = true;
             else if(flag == "Z") zeroQ = true;
-            else if(["R", "RW", "IMPLIED", "RAW", "BRANCH"].indexOf(flag) > -1)
+            else if(flag == "C") carryQ = true;
+            else if(["R", "RW", "IMPLIED", "RAW", "BRANCH", "W"].indexOf(flag) > -1)
                 mode = flag;
             else if (["A", "X", "Y", "tmp", "OP"].indexOf(flag) > -1)
                 operand = flag;
