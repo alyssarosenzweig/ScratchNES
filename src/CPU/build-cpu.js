@@ -115,7 +115,7 @@ var sources = table.map(function(x, i) {
 
         instruction.push('say "' + x.assembler + '"');
 
-        if(x.name != "JMP") {
+        if(x.name != "JMP" && x.name != "JSR") {
             instruction.push("change PC by " + x.size);
         }
 
