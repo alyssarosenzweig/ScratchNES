@@ -1,0 +1,4 @@
+IMPLIED
+compute SR
+mapper write (256 + S) SR
+set S to (S - 1) mod 256
