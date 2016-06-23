@@ -69,6 +69,7 @@ var sources = table.map(function(x, i) {
             instruction.push("set OP to M");
         } else if(mode == "RW") {
             if(x.addressing == "accumulator") {
+                operand = "A";
                 ins = ins.map(function(q) {
                     return q.replace(/OP/g, "A");
                 });
