@@ -20,8 +20,6 @@ var emission = [
     "set opcode to M"
 ];
 
-table = table.slice(0, 16);
-
 var sources = table.map(function(x, i) {
     if(x) {
         var instruction = [];
@@ -117,7 +115,7 @@ var sources = table.map(function(x, i) {
 });
 
 // dump out an 8 level deep BST
-console.log(bst(sources, 0, 15).join('\n'));
+console.log(bst(sources, 0, 255).join('\n'));
 
 function bst(sources, start, end) {
     if(start == end)
