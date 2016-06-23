@@ -1,7 +1,7 @@
 mapper read PC+1
 set tmp to M
 mapper read PC+2
-mapper read tmp * 256 + M
+mapper read M * 256 + tmp
 set tmp2 to M
-mapper read tmp * 256 + M + 1
-set address to tmp2 * 256 + M
+mapper read M * 256 + tmp + 1
+set address to M * 256 + tmp2
