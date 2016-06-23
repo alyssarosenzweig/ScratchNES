@@ -32,7 +32,10 @@ var sources = table.map(function(x, i) {
         if(!addressing_cache[x.addressing]) {
             addressing_cache[x.addressing] =
                 fs.readFileSync("addressing/" + x.addressing)
-                    .toString().split("\n");
+                    .toString().trim().split("\n");
+
+            if(addressing_cache[x.addressing][0].trim().length == 0)
+                addressing_cache[x.addressing] = [];
         }
 
         instruction = instruction.concat(addressing_cache[x.addressing]);
@@ -41,7 +44,7 @@ var sources = table.map(function(x, i) {
         if(!instruction_cache[x.name]) {
             instruction_cache[x.name] =
                 fs.readFileSync("instructions/" + x.name)
-                    .toString().split("\n");
+                    .toString().trim().split("\n");
         }
 
         // follow the flags
@@ -59,7 +62,14 @@ var sources = table.map(function(x, i) {
                 console.error("Unknown flag " + flag + " for instruction " + x.name);
         });
 
-        console.log(mode);
+        if(mode == "R") {
+            instruction.push("mapper read address");
+            instruction.push("set OP to M");
+        } else if(mode == "IMPLIED") {
+
+        } else {
+            console.error("Unsupported mode " + mode);
+        }
 
         // add the actual code of the instruction
         instruction = instruction.concat(instruction_cache[x.name].slice(1));
