@@ -1,6 +1,6 @@
-set tmp to join "0x" (M)
+set tmp to M
 mapper read PC+2
-mapper read tmp * 256 + (join "0x" (M))
-set tmp2 to join "0x" (M)
-mapper read tmp * 256 + tmp2 + 1
-set address to tmp2 * 256 + (join "0x" (M))
+mapper read tmp * 256 + M
+set tmp2 to M
+mapper read tmp * 256 + M + 1
+set address to tmp2 * 256 + M

@@ -1,2 +1,2 @@
 mapper read PC+1
-set address to ((join "0x" M) + (join "0x" X)) mod 256
+set address to (M + X) mod 256

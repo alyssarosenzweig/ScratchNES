@@ -18,10 +18,10 @@ function emit(register, name, value) {
 
     if(register == "M") {
         emission.push("RW, N, Z");
-        emission.push("set OP to item (((join \"0x\" (OP)) " + (value ? "-" : "+") + " 1) mod 256) of hex");
+        emission.push("set OP to (OP " + (value ? "-" : "+") + " 1) mod 256");
     } else {
-        emission.push("IMPLIED");
-        emission.push("set " + register + " to item (((join \"0x\" (" + register + "))" + (value ? "-1" : "1") + ") mod 256) of hex");
+        emission.push("IMPLIED," + register + ",N,Z");
+        emission.push("set " + register + " to (" + register + " " + (value ? "-" : "+") + " 1) mod 256");
     }
 
     fs.writeFileSync("instructions/" + name, emission.join("\n"));

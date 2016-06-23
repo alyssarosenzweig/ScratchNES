@@ -29,7 +29,7 @@ function emit(name, flag, value) {
     emission.push(
             "change PC by " +
             flagNum +
-            " * ((join \"0x\" (M)) + 256 * (<(join \"0x\" (M)) < 128> - 1))"
+            " * (M + 256 * (<M < 128> - 1))"
     );
 
     fs.writeFileSync("instructions/" + name, emission.join("\n"));
