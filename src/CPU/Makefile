@@ -4,5 +4,9 @@ bin/reference.txt: build-reference.sh
 bin/table.json: bin/reference.txt parse-reference.js
 	node parse-reference.js bin/reference.txt
 
+instructions/BCC:
+	node branch-maker.js
+
 clean:
 	rm instructions/{BCC, BCS, BNE, BEQ, BVC, BVS, BPL, BMI}
+	rm bin/*
