@@ -1,0 +1,19 @@
+define mapper read (location)
+set M to 255
+
+define mapper write (location) (value)
+
+define flagZ
+set flagZ to <A = 0>
+
+define flagN
+set flagN to <join "0x" (letter 1 of A) > 7 >
+
+define two2native
+set tmp to A - 256 + (256 * <A < 128>)
+
+define push (value)
+mapper write 256 + S value
+set S to (S - 1) mod 256
+
+define interrupt
