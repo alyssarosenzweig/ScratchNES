@@ -9,6 +9,7 @@ var fs = require("fs");
 
 // avoid excessive disk use
 var instruction_cache = {};
+var addressing_cache = {};
 
 // read the table in
 var table = JSON.parse(fs.readFileSync("bin/table.json").toString());
@@ -21,10 +22,25 @@ var emission = [
 
 var sources = table.map(function(x, i) {
     if(x) {
-        return [
+        var instruction = [];
+
+        // add stub for addressing mode
+        // load if not already in-memory
+
+        if(!addressing_cache[x.addressing]) {
+            addressing_cache[x.addressing] =
+                fs.readFileSync("addressing/" + x.addressing)
+                    .toString().split("\n");
+        }
+
+        instruction = instruction.concat(addressing_cache[x.addressing]);
+
+        instruction = instruction.concat([
             'say "' + x.assembler + '" for 2 secs',
             'change PC by ' + x.size
-        ].join("\n");
+        ]);
+
+        return instruction.join("\n");
     } else {
         return [
             'say "Illegal Opcode ' + i + ' used, ignoring." for 2 secs',
@@ -34,7 +50,7 @@ var sources = table.map(function(x, i) {
 });
 
 // dump out an 8 level deep BST
-console.log(bst(sources, 0, 255).join('\n'));
+console.log(bst(sources, 0, 3).join('\n'));
 
 function bst(sources, start, end) {
     if(start == end)
