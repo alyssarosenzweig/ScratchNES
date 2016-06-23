@@ -1,0 +1,3 @@
+RW,N,Z
+set flagC to <join "0x" (letter 1 of OP) > 7 >
+set OP to (OP * 2) mod 256
