@@ -28,10 +28,9 @@ var sources = table.map(function(x, i) {
 });
 
 // dump out an 8 level deep BST
-console.log(bst(sources, 0, 7));
+console.log(bst(sources, 0, 255).join('\n'));
 
 function bst(sources, start, end) {
-    console.log(start + " - " + end);
     if(start == end)
         return [sources[start]];
 
@@ -40,16 +39,15 @@ function bst(sources, start, end) {
             "if tmp = " + start + " then",
                 sources[start],
             "else",
-                sources[end]
+                sources[end],
+            "end"
             ];
 
-    var emission = [
-        "if tmp < " + (start+end+1)/2 + " then",
-            bst(sources, start, start + (end-start-1) / 2),
-        "else",
-            bst(sources, start + (end-start+1) / 2, end),
-        "end"
-    ];
+    var emission = ["if tmp < " + (start+end+1)/2 + " then"]
+        .concat(bst(sources, start, start + (end-start-1) / 2))
+        .concat(["else"])
+        .concat(bst(sources, start + (end-start+1) / 2, end))
+        .concat(["end"]);
 
     return emission;
 }
