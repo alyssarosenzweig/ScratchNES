@@ -65,7 +65,8 @@ function parseInstruction(instruction) {
             "addressing": addressing,
             "size": size,
             "opcode": opcode,
-            "cycles": cycles
+            "cycles": cycles,
+            "assembler": assembler
         };
     });
 
