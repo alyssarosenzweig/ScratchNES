@@ -1,2 +1,2 @@
 R,N,Z
-set A to join (item (join (letter 1 of A) (letter 1 of M)) of AND) (item (join (letter 2 of A) (letter 2 of M)) of AND)
+set A to join (item (join (letter 1 of A) (letter 1 of OP)) of AND) (item (join (letter 2 of A) (letter 2 of OP)) of AND)
