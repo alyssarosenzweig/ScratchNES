@@ -113,10 +113,11 @@ var sources = table.map(function(x, i) {
             instruction.push("set flagC to <" + operand + " > 255 or " + operand + " < 0>");
         }
 
-        instruction = instruction.concat([
-            'say "' + x.assembler + '" for 2 secs',
-            'change PC by ' + x.size
-        ]);
+        instruction = instruction.push('say "' + x.assembler + '" for 2 secs');
+
+        if(instruction.name != "JMP") {
+            instruction.push("change PC by " + x.size);
+        }
 
         return instruction.join("\n");
     } else {
