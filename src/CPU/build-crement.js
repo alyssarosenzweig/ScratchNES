@@ -17,10 +17,10 @@ function emit(register, name, value) {
     var emission = [];
 
     if(register == "M") {
-        emission.push("RW, N, Z");
+        emission.push("RW, N, Z, " + register);
         emission.push("set OP to (OP " + (value ? "-" : "+") + " 1) mod 256");
     } else {
-        emission.push("IMPLIED," + register + ",N,Z");
+        emission.push("IMPLIED," + register + ",N,Z," + register);
         emission.push("set " + register + " to (" + register + " " + (value ? "-" : "+") + " 1) mod 256");
     }
 
