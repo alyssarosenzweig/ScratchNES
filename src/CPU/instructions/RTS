@@ -4,4 +4,4 @@ set S to (S + 1) mod 256
 set tmp to M
 mapper read (257 + S)
 set S to (S + 1) mod 256
-set PC to (join "0x" (join tmp M))
+set PC to (tmp*256) + M
