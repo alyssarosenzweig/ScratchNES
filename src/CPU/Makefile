@@ -17,7 +17,7 @@ instructions/TAX:
 	node build-transfer.js
 
 instructions/EOR:
-	node build-bitwise.js
+	node build_bitwise.js
 
 clean:
 	-cd instructions ; rm BCC BCS BNE BEQ BVC BVS BPL BMI

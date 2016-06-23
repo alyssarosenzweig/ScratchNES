@@ -17,7 +17,7 @@ var table = JSON.parse(fs.readFileSync("bin/table.json").toString());
 // jump table emission, etc.
 var emission = [
     "mapper read PC",
-    "set tmp to join \"0x\" (M)"
+    "set opcode to M"
 ];
 
 table = table.slice(0, 4);
@@ -36,6 +36,20 @@ var sources = table.map(function(x, i) {
         }
 
         instruction = instruction.concat(addressing_cache[x.addressing]);
+
+        // add stub for instruction
+        if(!instruction_cache[x.name]) {
+            instruction_cache[x.name] =
+                fs.readFileSync("instructions/" + x.name)
+                    .toString().split("\n");
+        }
+
+        // follow the flags
+        var flags = instruction_cache[x.name][0].replace(/ /g, '').split(',');
+        console.log(flags);
+
+        // add the actual code of the instruction
+        instruction = instruction.concat(instruction_cache[x.name].slice(1));
 
         instruction = instruction.concat([
             'say "' + x.assembler + '" for 2 secs',
@@ -60,14 +74,14 @@ function bst(sources, start, end) {
 
     if(start + 1 == end)
         return [
-            "if tmp = " + start + " then",
+            "if opcode = " + start + " then",
                 sources[start],
             "else",
                 sources[end],
             "end"
             ];
 
-    var emission = ["if tmp < " + (start+end+1)/2 + " then"]
+    var emission = ["if opcode < " + (start+end+1)/2 + " then"]
         .concat(bst(sources, start, start + (end-start-1) / 2))
         .concat(["else"])
         .concat(bst(sources, start + (end-start+1) / 2, end))
