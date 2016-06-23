@@ -1,3 +1,4 @@
+IMPLIED
 set flagI to 1
 mapper write (256 + S) (PC + 2)
 set S to (S - 1) mod 256

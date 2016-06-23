@@ -1,2 +1,2 @@
 R, tmp, N, Z, C
-set tmp to Y - OP
+set tmp to (join "0x" (Y)) - (join "0x" (OP))

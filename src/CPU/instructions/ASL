@@ -1,3 +1,3 @@
-RW,N,Z
+RW,N,Z,OP
 set flagC to <join "0x" (letter 1 of OP) > 7 >
-set OP to (OP * 2) mod 256
+set OP to (item ( (join "0x" (OP)) * 2) mod 256 of hex)
