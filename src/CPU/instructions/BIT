@@ -1,0 +1,3 @@
+R, N
+set flagV to <(OP mod 128) > 63>
+set flagZ to <<(item (join (letter 1 of A) (letter 1 of OP))+1 of AND) = 0> and <(item (join (letter 2 of A) (letter 2 of OP))+1 of AND) = 0>>
