@@ -17,7 +17,7 @@ instructions/TAX:
 	node build-transfer.js
 
 clean:
-	cd instructions && rm BCC BCS BNE BEQ BVC BVS BPL BMI
-	cd instructions && rm CLC SEC CLD SED CLI SEI CLV
-	cd instructions && rm INC INX INY DEC DEX DEY
-	cd instructions && rm TAX TAY TSX TXA TXS TYA
+	-cd instructions ; rm BCC BCS BNE BEQ BVC BVS BPL BMI
+	-cd instructions ; rm CLC SEC CLD SED CLI SEI CLV
+	-cd instructions ; rm INC INX INY DEC DEX DEY
+	-cd instructions ; rm TAX TAY TSX TXA TXS TYA

@@ -1,10 +1,10 @@
 IMPLIED
 mapper read (257 + S)
 set S to (S + 1) mod 256
-set flagN to < (item (join (letter 1 of M) "8") of AND) = 8>
-set flagV to < (item (join (letter 1 of M) "4") of AND) = 4>
-set flagB to < (item (join (letter 1 of M) "1") of AND) = 1>
-set flagD to < (item (join (letter 2 of M) "8") of AND) = 8>
-set flagI to < (item (join (letter 2 of M) "4") of AND) = 4>
-set flagZ to < (item (join (letter 2 of M) "2") of AND) = 2>
-set flagC to < (item (join (letter 2 of M) "1") of AND) = 1>
+set flagN to < (item (join (letter 1 of M) "8")+1 of AND) = 8>
+set flagV to < (item (join (letter 1 of M) "4")+1 of AND) = 4>
+set flagB to < (item (join (letter 1 of M) "1")+1 of AND) = 1>
+set flagD to < (item (join (letter 2 of M) "8")+1 of AND) = 8>
+set flagI to < (item (join (letter 2 of M) "4")+1 of AND) = 4>
+set flagZ to < (item (join (letter 2 of M) "2")+1 of AND) = 2>
+set flagC to < (item (join (letter 2 of M) "1")+1 of AND) = 1>

@@ -1,2 +1,2 @@
 R,N,Z,A
-set A to join (item (join (letter 1 of A) (letter 1 of OP)) of EOR) (item (join (letter 2 of A) (letter 2 of OP)) of EOR)
+set A to join (item (join (letter 1 of A) (letter 1 of OP))+1 of EOR) (item (join (letter 2 of A) (letter 2 of OP))+1 of EOR)
