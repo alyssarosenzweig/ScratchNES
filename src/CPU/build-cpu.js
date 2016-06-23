@@ -62,7 +62,7 @@ var sources = table.map(function(x, i) {
                 console.error("Unknown flag " + flag + " for instruction " + x.name);
         });
 
-        var ins = insruction_cache[x.name];
+        var ins = insruction_cache[x.name].slice(1);
 
         if(mode == "R") {
             instruction.push("mapper read address");
@@ -80,7 +80,7 @@ var sources = table.map(function(x, i) {
         }
 
         // add the actual code of the instruction
-        instruction = instruction.concat(instruction_cache[x.name].slice(1));
+        instruction = instruction.concat(ins);
 
         instruction = instruction.concat([
             'say "' + x.assembler + '" for 2 secs',
