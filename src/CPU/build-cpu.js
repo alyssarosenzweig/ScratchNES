@@ -19,16 +19,37 @@ var emission = [
     "set tmp to join \"0x\" (M)"
 ];
 
-var sources = table.map(function(x) {
+var sources = table.map(function(x, i) {
     if(x) {
-        return "legit";
+        return "legit " + i;
     } else {
-        return "illegit";
-    });
+        return "illegit " + i;
+    }
+});
 
-// dump out a 8 level deep BST
-console.log(bst(sources, 0, 256));
+// dump out an 8 level deep BST
+console.log(bst(sources, 0, 7));
 
 function bst(sources, start, end) {
-    
+    console.log(start + " - " + end);
+    if(start == end)
+        return [sources[start]];
+
+    if(start + 1 == end)
+        return [
+            "if tmp = " + start + " then",
+                sources[start],
+            "else",
+                sources[end]
+            ];
+
+    var emission = [
+        "if tmp < " + (start+end+1)/2 + " then",
+            bst(sources, start, start + (end-start-1) / 2),
+        "else",
+            bst(sources, start + (end-start+1) / 2, end),
+        "end"
+    ];
+
+    return emission;
 }
