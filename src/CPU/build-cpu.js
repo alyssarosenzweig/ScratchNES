@@ -46,7 +46,20 @@ var sources = table.map(function(x, i) {
 
         // follow the flags
         var flags = instruction_cache[x.name][0].replace(/ /g, '').split(',');
-        console.log(flags);
+        var negQ = false, zeroQ = false, mode = null, operand = null;
+
+        flags.forEach(function(flag) {
+            if(flag == "N") negQ = true;
+            else if(flag == "Z") zeroQ = true;
+            else if(["R", "RW", "IMPLIED", "RAW", "BRANCH"].indexOf(flag) > -1)
+                mode = flag;
+            else if (["A", "X", "Y", "tmp"].indexOf(flag) > -1)
+                operand = flag;
+            else
+                console.error("Unknown flag " + flag + " for instruction " + x.name);
+        });
+
+        console.log(mode);
 
         // add the actual code of the instruction
         instruction = instruction.concat(instruction_cache[x.name].slice(1));
