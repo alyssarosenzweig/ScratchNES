@@ -1,7 +1,5 @@
-R
+R,N,Z
 set tmp to (join "0x" (A)) + (join "0x" (M)) + flagC
 set A to item (tmp mod 256) of hex
-set flagZ to <A = 0>
 set flagC to <tmp > 255>
-set flagN to <join "0x" (letter 1 of A) > 7 >
 set flagV to <tmp > 127 or tmp < -128>
