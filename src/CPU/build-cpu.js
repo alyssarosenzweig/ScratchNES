@@ -56,7 +56,7 @@ var sources = table.map(function(x, i) {
             else if(flag == "Z") zeroQ = true;
             else if(["R", "RW", "IMPLIED", "RAW", "BRANCH"].indexOf(flag) > -1)
                 mode = flag;
-            else if (["A", "X", "Y", "tmp"].indexOf(flag) > -1)
+            else if (["A", "X", "Y", "tmp", "OP"].indexOf(flag) > -1)
                 operand = flag;
             else
                 console.error("Unknown flag " + flag + " for instruction " + x.name);
@@ -92,6 +92,14 @@ var sources = table.map(function(x, i) {
 
         // add the actual code of the instruction
         instruction = instruction.concat(ins);
+
+        if(negQ) {
+            instruction.push("set flagN to <" + operand + " > 127>");
+        }
+
+        if(zeroQ) {
+            instruction.push("set flagZ to <" + operand + " = 0>");
+        }
 
         instruction = instruction.concat([
             'say "' + x.assembler + '" for 2 secs',
