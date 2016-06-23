@@ -23,7 +23,8 @@ function emit(name, flag, value) {
     emission.push("mapper read PC+1");
 
     // emission
-    var flagNum = value ? flag : "(1 - " + flag + ")";
+    var flagNum = value ? "flag" + flag
+                        : "(1 - flag" + flag + ")";
 
     emission.push(
             "change PC by " +
@@ -35,6 +36,6 @@ function emit(name, flag, value) {
 }
 
 for(var flag in branches) {
-    emit(branches[flag][0], flag, 0);
-    emit(branches[flag][1], flag, 0);
+    emit(branches[flag][0], flag, false);
+    emit(branches[flag][1], flag, true);
 }
