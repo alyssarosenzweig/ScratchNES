@@ -1,0 +1,8 @@
+IMPLIED
+PLP
+mapper read (257 + S)
+set S to (S + 1) mod 256
+set tmp to M
+mapper read (257 + S)
+set S to (S + 1) mod 256
+set PC to join tmp M
