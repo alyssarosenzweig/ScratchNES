@@ -1,4 +1,4 @@
-RW, N, Z
+RW, N, Z, OP
 set tmp to <OP > 127>
 set OP to OP * 2 + flagC
 set flagC to tmp

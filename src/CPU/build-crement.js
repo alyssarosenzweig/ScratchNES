@@ -17,7 +17,7 @@ function emit(register, name, value) {
     var emission = [];
 
     if(register == "M") {
-        emission.push("RW, N, Z, " + register);
+        emission.push("RW, N, Z, OP");
         emission.push("set OP to (OP " + (value ? "-" : "+") + " 1) mod 256");
     } else {
         emission.push("IMPLIED," + register + ",N,Z," + register);

@@ -1,4 +1,4 @@
-RW, N, Z
+RW, N, Z, OP
 set tmp to <OP mod 2 = 1>
 set OP to (floor of OP / 2) + (128 * flagC)
 set flagC to tmp
