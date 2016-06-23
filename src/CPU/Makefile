@@ -4,6 +4,9 @@ bin/reference.txt: build-reference.sh
 bin/table.json: bin/reference.txt parse-reference.js
 	node parse-reference.js bin/reference.txt
 
+bin/EOR.txt:
+	node build-lookups.js
+
 instructions/BCC:
 	node branch-maker.js
 
