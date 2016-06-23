@@ -16,8 +16,12 @@ instructions/INC:
 instructions/TAX:
 	node build-transfer.js
 
+instructions/EOR:
+	node build-bitwise.js
+
 clean:
 	-cd instructions ; rm BCC BCS BNE BEQ BVC BVS BPL BMI
 	-cd instructions ; rm CLC SEC CLD SED CLI SEI CLV
 	-cd instructions ; rm INC INX INY DEC DEX DEY
 	-cd instructions ; rm TAX TAY TSX TXA TXS TYA
+	-cd instructions ; rm AND EOR ORA
