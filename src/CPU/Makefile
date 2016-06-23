@@ -7,6 +7,10 @@ bin/table.json: bin/reference.txt parse-reference.js
 instructions/BCC:
 	node branch-maker.js
 
+instructions/CLC:
+	node flag-maker.js
+
 clean:
 	rm instructions/{BCC, BCS, BNE, BEQ, BVC, BVS, BPL, BMI}
+	rm instructions/{CLC, SEC, CLD, SED, CLI, SEI, CLV}
 	rm bin/*
