@@ -21,9 +21,15 @@ var emission = [
 
 var sources = table.map(function(x, i) {
     if(x) {
-        return "legit " + i;
+        return [
+            'say "' + x.assembly + '" for 2 seconds',
+            'change PC by ' + x.size
+        ].join("\n");
     } else {
-        return "illegit " + i;
+        return [
+            'say "Illegal Opcode ' + i + ' used, ignoring." for 2 seconds',
+            'change PC by 1'
+        ].join("\n");
     }
 });
 
