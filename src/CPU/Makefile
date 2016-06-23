@@ -13,8 +13,11 @@ instructions/CLC:
 instructions/INC:
 	node build-crement.js
 
+instructions/TAX:
+	node build-transfer.js
+
 clean:
-	rm instructions/{BCC, BCS, BNE, BEQ, BVC, BVS, BPL, BMI}
-	rm instructions/{CLC, SEC, CLD, SED, CLI, SEI, CLV}
-	rm instructions/{INC, INX, INY, DEC, DEX, DEY}
-	rm bin/*
+	cd instructions && rm BCC BCS BNE BEQ BVC BVS BPL BMI
+	cd instructions && rm CLC SEC CLD SED CLI SEI CLV
+	cd instructions && rm INC INX INY DEC DEX DEY
+	cd instructions && rm TAX TAY TSX TXA TXS TYA
