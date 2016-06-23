@@ -25,7 +25,7 @@ Automatically update the respective flag in the typical way.
 
 # Internal format
 
-Memory is stored as 8-bit unprefixed hex values (e.g.: "FF"). The S and PC registers are stored in decimal. The SR register is implied and broken up into 8 seperate boolean registers. The remaining registers are 8-bit hex as well and need casts to use.
+Memory is stored as 8-bit unprefixed hex values (e.g.: "FF"). The SR register is implied and broken up into 8 seperate boolean registers. The remaining registers are decimal.
 
 Please take caution with lookup tables -- they're one-indexed not zero!
 
