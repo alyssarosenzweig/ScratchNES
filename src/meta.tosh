@@ -21,6 +21,7 @@ define PLP
 define interrupt
 
 define compute SR
+set SR to (128*flagN) + (64*flagV) + (32*1) + (16*flagB) + (8*flagD) + (4*flagI) + (2*flagZ) + flagC
 
 when flag clicked
 set A to 0
@@ -41,6 +42,7 @@ show variable flagI
 show variable flagB
 show variable flagD
 show variable S
+show variable SR
 delete all of RAM
 repeat 2048
 	add 0 to RAM
@@ -49,5 +51,6 @@ end
 when p key pressed
 mapper read PC
 interpret instruction M
+compute SR
 
 define interpret instruction (opcode)
