@@ -1,0 +1,72 @@
+; "256x256 framebuffer"
+; "Uses smart double buffering with a poking rendering method"
+; "Designed for use with ScratchNES"
+
+define-atomic paint
+go to x: -128 y: 128
+set I to 1
+pen down
+repeat 256
+    delete all of scanline
+    set Y to 128 - y position
+    set X to 0
+    set flag to 0
+    repeat 240
+        set color to 16000000 * <X > box x and Y > box y and X < box x + box w and Y < box y + box h>
+        add color to scanline
+        change X by 1
+        change flag by <item I of view = color>
+        change I by 1
+    end
+    if not flag = 240 then
+        change I by -240
+        set X to 1
+        set x to -128
+        repeat 60
+            set color to item X of scanline
+            set color2 to item X+1 of scanline
+            set color3 to item X+2 of scanline
+            set color4 to item X+3 of scanline
+            replace item I of view with color
+            replace item I+1 of view with color2
+            replace item I+2 of view with color3
+            replace item I+3 of view with color4
+            change I by 4
+            change X by 4
+            set pen color to ((color * 0.25)  + (color2 * 0.25) + (color3 * 0.25) + (color4 * 0.25))
+            change x by 4
+        end
+    end
+    change y by -1
+end
+pen up
+
+when flag clicked
+initialize framebuffer
+set box x to 128
+set box y to 64
+set box w to 64
+set box h to 64
+hide
+reset timer
+set count to 0
+show variable count
+show variable q
+forever
+    set box x to 128 + (64 * cos of (50 * timer))
+    paint
+    change count by 1
+    set q to timer / count
+end
+
+define initialize framebuffer
+delete all of view
+repeat (256 * 240)
+    add -1 to view
+end
+pen up
+clear
+set pen size to 1
+
+define ; [comment]
+

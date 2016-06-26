@@ -119,6 +119,19 @@ var sources = table.map(function(x, i) {
             instruction.push("change PC by " + x.size);
         }
 
+        // cycle count
+        if(mode == "BRANCH") {
+            // TODO: skip
+            instruction.push("change cycles by 3");
+        } else {
+            if(x.cycles.length == 2) {
+                // TODO: skip a cycle if needed
+                instruction.push("change cycles by " + x.cycles[0]);
+            } else {
+                instruction.push("change cycles by " + x.cycles);
+            }
+        }
+
         return instruction.join("\n");
     } else {
         return [
