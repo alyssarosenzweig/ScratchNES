@@ -90,6 +90,19 @@ show variable q
 forever
 	replace item 1 of OAM with floor of (64 + 48 * sin of (20 * count))
 	replace item 4 of OAM with floor of (84 + 64 * cos of (10 * count))
+	replace item 5 of OAM with floor of (87 + 16 * sin of (10 * count))
+	replace item 8 of OAM with floor of (91 + 80 * cos of (20 * count))
+	replace item 9 of OAM with floor of (170 + 32 * sin of (15 * count))
+	replace item 12 of OAM with floor of (90 + 90 * cos of (20 * count))
+	replace item 13 of OAM with floor of (120 + 32 * sin of (30 * count))
+	replace item 1+16 of OAM with floor of (64 + 48 * sin of (20 * count))
+	replace item 4+16 of OAM with floor of (84 + 64 * cos of (10 * count)) + 8
+	replace item 5+16 of OAM with floor of (87 + 16 * sin of (10 * count))
+	replace item 8+16 of OAM with floor of (91 + 80 * cos of (20 * count)) + 8
+	replace item 9+16 of OAM with floor of (170 + 32 * sin of (15 * count)) 
+	replace item 12+16 of OAM with floor of (90 + 90 * cos of (20 * count)) + 8
+	replace item 13+16 of OAM with floor of (120 + 32 * sin of (30 * count))
+	replace item 16+16 of OAM with floor of (91 + 80 * sin of (10 * count)) + 8
 	fast phosphorus paint
 	change count by 1
 	set q to timer / count
