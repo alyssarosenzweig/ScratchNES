@@ -3,7 +3,45 @@
 ; "Designed for use with ScratchNES"
 
 define-atomic evaluate pixel x: (mX) y: (mY)
-set color to (16000000 * <mX > box x and mY > box y and mX < box x + 8 and mY < box y + 8>)
+
+define-atomic evaluate sprites scanline: (N)
+delete all of secondary OAM
+delete all of evaluation line
+repeat 32
+	add "255" to secondary OAM
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+	add "-1" to evaluation line
+end
+set evaluation n to 1
+set evaluation slot to 1
+repeat 64
+	if evaluation slot < 32 then
+		if item evaluation n of OAM > N and item evaluation n of OAM - 8 < N then
+			replace item evaluation slot + 1 of secondary OAM with item (evaluation n + 1) of OAM
+			replace item evaluation slot + 2 of secondary OAM with item (evaluation n + 2) of OAM
+			set temp to item (evaluation n + 3) of OAM
+			replace item evaluation slot + 3 of secondary OAM with temp
+			change evaluation slot by 4
+			replace item temp of evaluation line with evaluation n
+			replace item temp+1 of evaluation line with evaluation n
+			replace item temp+2 of evaluation line with evaluation n
+			replace item temp+3 of evaluation line with evaluation n
+			replace item temp+4 of evaluation line with evaluation n
+			replace item temp+5 of evaluation line with evaluation n
+			replace item temp+6 of evaluation line with evaluation n
+			replace item temp+7 of evaluation line with evaluation n
+		end
+		change evaluation n by 4
+	end
+end
+; "TODO: evaluate sprites in secondary OAM"
+; "TODO: buggy sprite overflow flag"
 
 define-atomic fast phosphorus paint
 go to x: -128 y: 128
@@ -13,10 +51,11 @@ pen down
 repeat 224
 	delete all of scanline
 	change Y by 1
+	evaluate sprites scanline:  (Y)
 	set X to 0
 	set flag to 0
 	repeat 240
-		evaluate pixel x: X y: Y
+		set color to <not item X of evaluation line = -1> * 16000000
 		add color to scanline
 		change X by 1
 		change flag by <item I of view = color>
@@ -43,15 +82,14 @@ pen up
 
 when flag clicked
 initialize framebuffer
-set box x to 128
-set box y to 64
+initialize OAM
 hide
 reset timer
 set count to 0
 show variable q
 forever
-	set box x to 84 + 64 * cos of (10 * count)
-	set box y to 64 + 48 * sin of (20 * count)
+	replace item 1 of OAM with floor of (64 + 48 * sin of (20 * count))
+	replace item 4 of OAM with floor of (84 + 64 * cos of (10 * count))
 	fast phosphorus paint
 	change count by 1
 	set q to timer / count
@@ -65,5 +103,11 @@ end
 pen up
 clear
 set pen size to 1
+
+define initialize OAM
+delete all of OAM
+repeat 256
+	add "0" to OAM
+end
 
 define ; [comment]
