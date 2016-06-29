@@ -54,7 +54,7 @@ repeat 224
 	set X to 1
 	repeat 60
 		change X by 4
-		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000 + <not item (X + 3) of evaluation line = -1> * 16000000) * 0.5)
+		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000 + <not item (X + 3) of evaluation line = -1> * 16000000) * 0.25)
 		change x by 4
 	end
 	change y by -1
@@ -64,7 +64,10 @@ pen up
 when flag clicked
 initialize framebuffer
 initialize OAM
+clear log
 hide
+write PPU register 0 value: 0
+show variable M
 set temp to 1
 repeat 64
 	replace item temp of OAM with pick random 1 to 255
@@ -110,6 +113,7 @@ end
 ; "TODO: use O(logN) lookup instead of O(N)"
 
 define write PPU register (N) value: (V)
+log join "Writing " join (V) join " to register " (N)
 if N = 0 then
 	get bit mask (V)
 	set PPU base nametable address to 2 * letter 7 of mask + letter 8 of mask
@@ -223,3 +227,10 @@ repeat 256
 end
 
 define ; [comment]
+
+define clear log
+set log to ""
+show variable log
+
+define log [comment]
+set log to join (log) (join "n" (comment))
