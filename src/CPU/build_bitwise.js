@@ -13,8 +13,7 @@ function emit(op) {
         "R,N,Z,A",
         "set hA to item A+1 of hex",
         "set hOP to item OP+1 of hex",
-        'set A to join "0x" join (item (join "0x" (join (letter 1 of hA) (letter 1 of hOP)))+1 of ' + op + ') (item (join "0x" (join (letter 2 of hA) (letter 2 of hOP)))+1 of ' + op + ')'
-
+        'set A to (16*(item (join "0x" (join (letter 1 of hA) (letter 1 of hOP)))+1 of ' + op + ')) + (item (join "0x" (join (letter 2 of hA) (letter 2 of hOP)))+1 of ' + op + ')'
     ];
 
     fs.writeFileSync("instructions/" + op, emission.join("\n"));
