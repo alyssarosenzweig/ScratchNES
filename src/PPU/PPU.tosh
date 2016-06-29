@@ -1,10 +1,3 @@
-; "240x224 framebuffer"
-; "Uses smart double buffering with a poking rendering method"
-; "Designed for use with ScratchNES"
-
-define-atomic evaluate pixel x: (mX) y: (mY)
-set color to <not item mX of evaluation line = -1> * 16000000
-
 define-atomic evaluate sprites scanline: (N)
 delete all of secondary OAM
 delete all of evaluation line
@@ -61,35 +54,15 @@ repeat 224
 end
 pen up
 
-when flag clicked
-initialize framebuffer
-initialize OAM
-clear log
+define initialize PPU
+pen up
+clear
+set pen size to 1
+delete all of OAM
+repeat 256
+	add "0" to OAM
+end
 hide
-write PPU register 0 value: 0
-show variable M
-set temp to 1
-repeat 64
-	replace item temp of OAM with pick random 1 to 255
-	replace item temp + 3 of OAM with pick random 1 to 255
-	change temp by 4
-end
-set count to 0
-set times to 0
-show variable q
-forever
-	set temp to 1
-	repeat 64
-		replace item temp of OAM with (item temp of OAM + pick random -2 to 4) mod 255
-		replace item temp + 3 of OAM with (item (temp + 3) of OAM + pick random -2 to 4) mod 255
-		change temp by 4
-	end
-	reset timer
-	fast phosphorus paint
-	change times by timer
-	change count by 1
-	set q to times / count
-end
 
 define read PPU register (N)
 if N = 2 then
@@ -113,7 +86,6 @@ end
 ; "TODO: use O(logN) lookup instead of O(N)"
 
 define write PPU register (N) value: (V)
-log join "Writing " join (V) join " to register " (N)
 if N = 0 then
 	get bit mask (V)
 	set PPU base nametable address to 2 * letter 7 of mask + letter 8 of mask
@@ -174,9 +146,6 @@ repeat 256
 	change temp by 1
 end
 
-define mapper read (addr)
-; "stub"
-
 define read PPU memory
 if PPU high address < 32 then
 	set M to item (1 + PPU high address * 256 + PPU low address) of Pattern tables
@@ -214,23 +183,3 @@ else
 		end
 	end
 end
-
-define initialize framebuffer
-pen up
-clear
-set pen size to 1
-
-define initialize OAM
-delete all of OAM
-repeat 256
-	add "0" to OAM
-end
-
-define ; [comment]
-
-define clear log
-set log to ""
-show variable log
-
-define log [comment]
-set log to join (log) (join "n" (comment))
