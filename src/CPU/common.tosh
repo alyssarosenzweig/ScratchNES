@@ -1,3 +1,5 @@
+define ; [comment]
+
 define mapper read (addr)
 if addr < 8192 then
 	set M to item (addr mod 2048 + 1) of RAM
