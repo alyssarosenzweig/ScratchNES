@@ -103,17 +103,17 @@ define get bit mask (N)
 set temp to N
 set mask to ""
 repeat 8
-	set mask to join (<temp mod 2 = 1>*1) (mask)
-	set temp to (temp - (temp mod 2)) * 0.5
+	set mask to (join (<temp mod 2 = 1> * 1) (mask))
+	set temp to (temp - temp mod 2) * 0.5
 end
 
 ; "TODO: use O(logN) lookup instead of O(N)"
 
 define write PPU register (N) value: (V)
 if N = 0 then
-	get bit mask V
-	set PPU base nametable address to (2*letter 7 of mask) + letter 8 of mask
-	set PPU VRAM increment to (letter 6 of mask * 31) + 1
+	get bit mask (V)
+	set PPU base nametable address to 2 * letter 7 of mask + letter 8 of mask
+	set PPU VRAM increment to letter 6 of mask * 31 + 1
 	set PPU Sprite pattern table to letter 5 of mask * 4096
 	set PPU Background pattern table to letter 4 of mask * 4096
 	set PPU Sprite size to letter 3 of mask
@@ -121,7 +121,7 @@ if N = 0 then
 	set PPU generate NMI to letter 1 of mask
 else
 	if N = 1 then
-		get bit mask V
+		get bit mask (V)
 		set PPU grayscale to letter 8 of mask
 		set PPU show left8 bg to letter 7 of mask
 		set PPU show left8 sprites to letter 6 of mask
@@ -135,7 +135,7 @@ else
 			set PPU OAMADDR to V
 		else
 			if N = 4 then
-				replace item (PPU OAMADDR mod 256)+1 of OAM with V
+				replace item PPU OAMADDR mod 256 + 1 of OAM with V
 				change PPU OAMADDR by 1
 			else
 				if N = 5 then
@@ -165,7 +165,7 @@ end
 define OAM DMA (pagebase)
 set temp to 1
 repeat 256
-	mapper read pagebase+temp
+	mapper read (pagebase + temp)
 	replace item temp of OAM with M
 	change temp by 1
 end
@@ -174,7 +174,23 @@ define mapper read (addr)
 ; "stub"
 
 define read PPU memory
-; "stub"
+if PPU high address < 32 then
+	set M to item (1 + PPU high address * 256 + PPU low address) of Pattern tables
+else
+	if PPU high address < 48 then
+		set M to item ((PPU high address * 256) + PPU low address - 8191) of Nametables
+	else
+		if PPU high address < 63 then
+			set M to item ((PPU high address * 256) + PPU low address - 12287) of Nametables
+		else
+			if PPU high address < 64 then
+				set M to item (PPU low address mod 32) + 1 of Palette
+			else
+				; "TODO: PPU memory mirroring"
+			end
+		end
+	end
+end
 
 define write PPU memory (V)
 ; "stub"
