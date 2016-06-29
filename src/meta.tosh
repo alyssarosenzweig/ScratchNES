@@ -31,7 +31,7 @@ set A to 0
 set X to 0
 set Y to 0
 set S to "0xFD"
-set PC to 32768
+set PC to 49152
 show variable A
 show variable X
 show variable Y
@@ -45,6 +45,8 @@ show variable flagI
 show variable flagB
 show variable flagD
 show variable S
+set line to 0
+show variable line
 delete all of RAM
 repeat 2048
 	add "0" to RAM
@@ -53,6 +55,6 @@ end
 when p key pressed
 mapper read (PC)
 interpret instruction (M)
+change line by 1
 
 define interpret instruction (opcode)
-
