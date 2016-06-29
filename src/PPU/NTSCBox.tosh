@@ -193,7 +193,23 @@ else
 end
 
 define write PPU memory (V)
-; "stub"
+if PPU high address < 32 then
+	replace item (1 + PPU high address * 256 + PPU low address) of Pattern tables with V
+else
+	if PPU high address < 48 then
+		replace item ((PPU high address * 256) + PPU low address - 8191) of Nametables with V
+	else
+		if PPU high address < 63 then
+			replace item ((PPU high address * 256) + PPU low address - 12287) of Nametables with V
+		else
+			if PPU high address < 64 then
+				replace item (PPU low address mod 32) + 1 of Palette with V
+			else
+				; "TODO: PPU memory mirroring"
+			end
+		end
+	end
+end
 
 define initialize framebuffer
 pen up
