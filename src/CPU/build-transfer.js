@@ -11,7 +11,7 @@ function emit(name) {
         "IMPLIED"
     ];
 
-    emission.push("set " + name[0] + " to " + name[1]);
+    emission.push("set " + name[1] + " to " + name[0]);
 
     fs.writeFileSync("instructions/T" + name, emission.join("\n"));
 }
