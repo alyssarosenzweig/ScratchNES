@@ -1,3 +1,3 @@
 #!/bin/sh
-node CPU/build-cpu.js > CPU.tosh
-cat bin/CPU.tosh PPU/PPU.tosh
+cd CPU ; node build-cpu.js > ../CPU.tosh ; cd ..
+cat CPU.tosh PPU/PPU.tosh
