@@ -31,7 +31,19 @@ set flagI to < (item (join (letter 2 of M) "4")+1 of AND) = 4>
 set flagZ to < (item (join (letter 2 of M) "2")+1 of AND) = 2>
 set flagC to < (item (join (letter 2 of M) "1")+1 of AND) = 1>
 
-define interrupt
+define interrupt: vector (vector)
+mapper write 256 + S (PC - (PC mod 256))
+set S to (S - 1) mod 256
+mapper write 256 + S (PC mod 256)
+set S to (S - 1) mod 256
+compute SR
+mapper write 256 + S SR
+set S to (S - 1) mod 256
+set flagI to 1
+mapper read vector
+set tmp to M
+mapper read vector+1
+set PC to (M*256) + tmp
 
 define compute SR
 set SR to (128*flagN) + (64*flagV) + (32) + (16*flagB) + (8*flagD) + (4*flagI) + (2*flagZ) + (1*flagC)
