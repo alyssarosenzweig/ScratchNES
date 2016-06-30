@@ -50,6 +50,10 @@ repeat 224
 		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000 + <not item (X + 3) of evaluation line = -1> * 16000000) * 0.25)
 		change x by 4
 	end
+	set PPU vblank? to 1
+	if PPU generate NMI = 1 then
+		interrupt: vector "0xFFFA"
+	end
 	change y by -1
 end
 pen up
