@@ -50,7 +50,7 @@ repeat 224
 	evaluate sprites scanline:  (Y)
 	set x to -128
 	set X to 1
-	repeat until X > 240
+	repeat until X > 255
                 step CPU
                 repeat cycles
                     emulate 3 PPU cycles
@@ -60,6 +60,10 @@ repeat 224
 	set PPU vblank? to 1
 	if PPU generate NMI = 1 then
 		interrupt: vector "0xFFFA"
+                repeat until cycles > 2380
+                    step CPU
+                end
+                set cycles to 0
 	end
 	change y by -1
 end
