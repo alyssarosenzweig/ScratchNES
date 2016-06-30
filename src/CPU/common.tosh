@@ -62,19 +62,7 @@ set X to 0
 set Y to 0
 set S to "0xFD"
 set PC to 49152
-show variable A
-show variable X
-show variable Y
 show variable PC
-show variable M
-show variable flagC
-show variable flagV
-show variable flagN
-show variable flagZ
-show variable flagI
-show variable flagB
-show variable flagD
-show variable S
 set line to 0
 show variable line
 delete all of RAM
