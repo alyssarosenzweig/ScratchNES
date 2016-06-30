@@ -31,7 +31,7 @@ set flagI to < (item (join (letter 2 of M) "4")+1 of AND) = 4>
 set flagZ to < (item (join (letter 2 of M) "2")+1 of AND) = 2>
 set flagC to < (item (join (letter 2 of M) "1")+1 of AND) = 1>
 
-define interrupt: vector (vector)
+define interrupt: vector [vector]
 mapper write 256 + S (PC - (PC mod 256))
 set S to (S - 1) mod 256
 mapper write 256 + S (PC mod 256)
