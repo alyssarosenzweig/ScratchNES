@@ -1,4 +1,6 @@
 IMPLIED
+mapper read (257 + S)
+set S to (S + 1) mod 256
 PLP
 mapper read (257 + S)
 set S to (S + 1) mod 256
