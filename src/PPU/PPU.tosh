@@ -45,10 +45,10 @@ repeat 224
 	evaluate sprites scanline:  (Y)
 	set x to -128
 	set X to 1
-	repeat 60
-		change X by 4
-		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000 + <not item (X + 3) of evaluation line = -1> * 16000000) * 0.25)
-		change x by 4
+	repeat 80
+		change X by 3
+		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000) * 0.33)
+		change x by 3
 	end
 	set PPU vblank? to 1
 	if PPU generate NMI = 1 then
