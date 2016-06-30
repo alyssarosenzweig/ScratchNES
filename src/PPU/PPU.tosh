@@ -57,17 +57,17 @@ repeat 224
                 end
                 set cycles to 0
 	end
-	set PPU vblank? to 1
-	if PPU generate NMI = 1 then
-		interrupt: vector "0xFFFA"
-                repeat until cycles > 2380
-                    step CPU
-                end
-                set cycles to 0
-	end
-	change y by -1
+		change y by -1
 end
 pen up
+set PPU vblank? to 1
+if PPU generate NMI = 1 then
+        interrupt: vector "0xFFFA"
+end
+repeat until cycles > 2380
+    step CPU
+end
+set cycles to 0
 
 define initialize PPU
 pen up
