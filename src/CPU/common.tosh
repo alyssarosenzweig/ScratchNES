@@ -75,6 +75,9 @@ repeat 2048
 end
 
 when p key pressed
+step CPU
+
+define-atomic step CPU
 mapper read (PC)
 interpret instruction (M)
 change line by 1
