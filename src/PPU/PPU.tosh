@@ -157,8 +157,8 @@ define OAM DMA (pagebase)
 set temp to 0
 repeat 256
 	mapper read ( (256*pagebase) + PPU OAMADDR + temp)
-	replace item temp of OAM with M
 	change temp by 1
+	replace item temp of OAM with M
 end
 
 define read PPU memory
