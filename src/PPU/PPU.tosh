@@ -154,6 +154,7 @@ else
 end
 
 define OAM DMA (pagebase)
+ask "OAM DMA?" and wait
 set temp to 1
 repeat 256
 	mapper read (pagebase + temp)
