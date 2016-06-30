@@ -36,7 +36,12 @@ end
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
-define-atomic fast phosphorus paint
+define-atomic emulate 3 PPU cycles
+change X by 3
+set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000) * 0.33)
+change x by 3
+
+define-atomic emulate frame
 go to x: -128 y: 128
 set Y to -1
 pen down
@@ -46,9 +51,7 @@ repeat 224
 	set x to -128
 	set X to 1
 	repeat 80
-		change X by 3
-		set pen color to ((<not item X of evaluation line = -1> * 16000000 + <not item (X + 1) of evaluation line = -1> * 16000000 + <not item (X + 2) of evaluation line = -1> * 16000000) * 0.33)
-		change x by 3
+		emulate 3 PPU cycles
 	end
 	set PPU vblank? to 1
 	if PPU generate NMI = 1 then
