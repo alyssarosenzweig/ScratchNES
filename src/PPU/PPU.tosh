@@ -37,8 +37,8 @@ end
 ; "TODO: buggy sprite overflow flag"
 
 define-atomic emulate 3 PPU cycles
-change mX by 3
 set pen color to ((<not item mX of evaluation line = -1> * 16000000 + <not item (mX + 1) of evaluation line = -1> * 16000000 + <not item (mX + 2) of evaluation line = -1> * 16000000) * 0.33)
+change mX by 3
 change x by 3
 
 define-atomic emulate frame
