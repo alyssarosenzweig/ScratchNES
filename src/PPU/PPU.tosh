@@ -154,10 +154,9 @@ else
 end
 
 define OAM DMA (pagebase)
-ask "OAM DMA?" and wait
-set temp to 1
+set temp to 0
 repeat 256
-	mapper read (pagebase + temp)
+	mapper read ( (256*pagebase) + PPU OAMADDR + temp)
 	replace item temp of OAM with M
 	change temp by 1
 end
