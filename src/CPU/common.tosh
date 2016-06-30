@@ -4,9 +4,13 @@ define mapper read (addr)
 if addr < 8192 then
 	set M to item (addr mod 2048 + 1) of RAM
 else
-	if addr > 32767 then
-		set M to (join "0x" (item ((addr - 32768) mod 16384 + 1) of PRG-ROM))
-	end
+        if addr > 8192 and addr < 8200 then
+                read PPU register (addr - 8192)
+        else
+	        if addr > 32767 then
+	        	set M to (join "0x" (item ((addr - 32768) mod 16384 + 1) of PRG-ROM))
+	        end
+        end
 end
 
 define mapper write (addr) (value)
@@ -14,7 +18,7 @@ if addr < 8192 then
 	replace item addr mod 2048 + 1 of RAM with value
 else
 	if addr > 8191 and addr < 8200 then
-		ask join join (value) " to PPU " (addr) and wait
+		write PPU register (addr - 8192) value: (value)
 	else
 		if addr > 32768 then
 			say "Writing to ROM isn't very nice, you know..."
