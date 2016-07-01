@@ -36,33 +36,32 @@ end
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
-define-atomic emulate 3 PPU cycles
-set pen color to ((<not item mX of evaluation line = -1> * 16000000 + <not item (mX + 1) of evaluation line = -1> * 16000000 + <not item (mX + 2) of evaluation line = -1> * 16000000) * 0.33)
-change mX by 3
-change x by 3
-
-define-atomic emulate frame
+define emulate frame
 go to x: -128 y: 128
 set mY to -1
+show variable mX
+show variable mY
 pen down
 repeat 224
-	change mY by 1
-	evaluate sprites scanline:  (mY)
-	set x to -128
-	set mX to 1
-	repeat until mX > 255
-                step CPU
-                repeat cycles
-                    emulate 3 PPU cycles
-                end
-                set cycles to 0
-	end
-		change y by -1
+    change mY by 1
+    evaluate sprites scanline:  (mY)
+    go to x: -128 y: y position - 1
+    pen down
+    set mX to 0
+    repeat until mX > 254
+        step CPU
+        repeat (3*cycles)
+            set pen color to (0)
+            change x by 1
+            change mX by 1
+        end
+        set cycles to 0
+    end
+    pen up
 end
-pen up
 set PPU vblank? to 1
 if PPU generate NMI = 1 then
-        interrupt: vector "0xFFFA"
+    interrupt: vector "0xFFFA"
 end
 repeat until cycles > 2380
     step CPU
