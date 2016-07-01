@@ -41,7 +41,6 @@ go to x: -128 y: 128
 set mY to -1
 show variable mX
 show variable mY
-pen down
 repeat 224
     change mY by 1
     evaluate sprites scanline:  (mY)
