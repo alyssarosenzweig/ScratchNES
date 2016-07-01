@@ -15,55 +15,94 @@ end
 set evaluation n to 1
 set evaluation slot to 1
 repeat 64
-	if evaluation slot < 32 and item evaluation n of OAM > N and item evaluation n of OAM - 8 < N then
+	if <evaluation slot < 32> and <N > item evaluation n of OAM> and <item evaluation n of OAM + 8 > N> then
 		replace item evaluation slot of secondary OAM with item evaluation n of OAM
 		replace item evaluation slot + 1 of secondary OAM with item (evaluation n + 1) of OAM
 		replace item evaluation slot + 2 of secondary OAM with item (evaluation n + 2) of OAM
 		set temp to item (evaluation n + 3) of OAM
 		replace item evaluation slot + 3 of secondary OAM with temp
+		replace item temp of evaluation line with evaluation slot
+		replace item temp + 1 of evaluation line with evaluation slot
+		replace item temp + 2 of evaluation line with evaluation slot
+		replace item temp + 3 of evaluation line with evaluation slot
+		replace item temp + 4 of evaluation line with evaluation slot
+		replace item temp + 5 of evaluation line with evaluation slot
+		replace item temp + 6 of evaluation line with evaluation slot
+		replace item temp + 7 of evaluation line with evaluation slot
 		change evaluation slot by 4
-		replace item temp of evaluation line with evaluation n
-		replace item temp + 1 of evaluation line with evaluation n
-		replace item temp + 2 of evaluation line with evaluation n
-		replace item temp + 3 of evaluation line with evaluation n
-		replace item temp + 4 of evaluation line with evaluation n
-		replace item temp + 5 of evaluation line with evaluation n
-		replace item temp + 6 of evaluation line with evaluation n
-		replace item temp + 7 of evaluation line with evaluation n
 	end
 	change evaluation n by 4
 end
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
+define get pattern tile: (tile) scanline: (scanline)
+get bit mask (join "0x" ((item (16 * tile + scanline) of CHR-ROM)))
+set lower mask to mask
+get bit mask (join "0x" ((item (16 * tile + scanline+8) of CHR-ROM)))
+
+define-atomic compute pixel
+if item mX+1 of evaluation line = -1 then
+	; "Background pixel. TODO nametables"
+	set tmp to 0
+else
+	; "A sprite! That I can do! Fetch it from CHR and decode"
+	get pattern tile:  item ((item mX+1 of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX+1 of evaluation line) of secondary OAM))
+	set offset to mX - item (item mX+1 of evaluation line + 3) of secondary OAM
+	change offset by 1
+	set tmp to (2 * letter offset of lower mask) + letter offset of mask
+	if tmp > 1 then
+		if tmp = 2 then
+			set tmp to "0xFF0000"
+		else
+			set tmp to "0xFFFFFF"
+		end
+	else
+		if tmp = 0 then
+			set tmp to "0x000000"
+		else
+			set tmp to "0x0000FF"
+		end
+	end
+end
+
 define emulate frame
 go to x: -128 y: 128
 set mY to -1
-show variable mX
-show variable mY
+; "show variable mX"
+; "show variable mY"
 repeat 224
-    change mY by 1
-    evaluate sprites scanline:  (mY)
-    go to x: -128 y: y position - 1
-    pen down
-    set mX to 0
-    repeat until mX > 254
-        step CPU
-        repeat (3*cycles)
-            set pen color to (0)
-            change x by 1
-            change mX by 1
-        end
-        set cycles to 0
-    end
-    pen up
+	change mY by 1
+	evaluate sprites scanline:  (mY)
+	go to x: -128 y: y position - 1
+	pen down
+	set mX to 0
+	repeat until mX > 254
+		step CPU
+		repeat cycles
+			compute pixel
+			set pen color to (tmp*1)
+			change mX by 1
+			change x by 1
+			compute pixel
+			set pen color to (tmp*1)
+			change x by 1
+			change mX by 1
+			compute pixel
+			set pen color to (tmp*1)
+			change x by 1
+			change mX by 1
+		end
+		set cycles to 0
+	end
+	pen up
 end
-set PPU vblank? to 1
+set PPU vblank?1 to 1
 if PPU generate NMI = 1 then
-    interrupt: vector "0xFFFA"
+	interrupt: vector "0xFFFA"
 end
 repeat until cycles > 2380
-    step CPU
+	step CPU
 end
 set cycles to 0
 
@@ -79,9 +118,9 @@ hide
 
 define read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank? + 64 * PPU sprite 0? + 32 * PPU sprite overflow?
+	set M to 128 * PPU vblank?1 + 64 * PPU sprite 0?1 + 32 * PPU sprite overflow?1
 	set PPU address latch to 0
-	set PPU vblank? to 0
+	set PPU vblank?1 to 0
 else
 	if N = 7 then
 		read PPU memory
@@ -154,7 +193,7 @@ end
 define OAM DMA (pagebase)
 set temp to 0
 repeat 256
-	mapper read ( (256*pagebase) + PPU OAMADDR + temp)
+	mapper read (256 * pagebase + PPU OAMADDR + temp)
 	change temp by 1
 	replace item temp of OAM with M
 end
@@ -164,13 +203,13 @@ if PPU high address < 32 then
 	set M to item (1 + PPU high address * 256 + PPU low address) of Pattern tables
 else
 	if PPU high address < 48 then
-		set M to item ((PPU high address * 256) + PPU low address - 8191) of Nametables
+		set M to item (PPU high address * 256 + PPU low address - 8191) of Nametables
 	else
 		if PPU high address < 63 then
-			set M to item ((PPU high address * 256) + PPU low address - 12287) of Nametables
+			set M to item (PPU high address * 256 + PPU low address - 12287) of Nametables
 		else
 			if PPU high address < 64 then
-				set M to item (PPU low address mod 32) + 1 of Palette
+				set M to item (PPU low address mod 32 + 1) of Palette
 			else
 				; "TODO: PPU memory mirroring"
 			end
@@ -180,16 +219,16 @@ end
 
 define write PPU memory (V)
 if PPU high address < 32 then
-	replace item (1 + PPU high address * 256 + PPU low address) of Pattern tables with V
+	replace item 1 + PPU high address * 256 + PPU low address of Pattern tables with V
 else
 	if PPU high address < 48 then
-		replace item ((PPU high address * 256) + PPU low address - 8191) of Nametables with V
+		replace item PPU high address * 256 + PPU low address - 8191 of Nametables with V
 	else
 		if PPU high address < 63 then
-			replace item ((PPU high address * 256) + PPU low address - 12287) of Nametables with V
+			replace item PPU high address * 256 + PPU low address - 12287 of Nametables with V
 		else
 			if PPU high address < 64 then
-				replace item (PPU low address mod 32) + 1 of Palette with V
+				replace item PPU low address mod 32 + 1 of Palette with V
 			else
 				; "TODO: PPU memory mirroring"
 			end
