@@ -15,7 +15,7 @@ end
 set evaluation n to 1
 set evaluation slot to 1
 repeat 64
-	if <evaluation slot < 32> and <N > item evaluation n of OAM> and <item evaluation n of OAM + 8 > N> then
+	if <evaluation slot < 32> and <not N < item evaluation n of OAM> and <item evaluation n of OAM + 8 > N> then
 		replace item evaluation slot of secondary OAM with item evaluation n of OAM
 		replace item evaluation slot + 1 of secondary OAM with item (evaluation n + 1) of OAM
 		replace item evaluation slot + 2 of secondary OAM with item (evaluation n + 2) of OAM
@@ -37,20 +37,19 @@ end
 ; "TODO: buggy sprite overflow flag"
 
 define get pattern tile: (tile) scanline: (scanline)
-get bit mask (join "0x" ((item (16 * tile + scanline) of CHR-ROM)))
+get bit mask (join "0x" ((item (16 * tile + scanline+1) of CHR-ROM)))
 set lower mask to mask
-get bit mask (join "0x" ((item (16 * tile + scanline+8) of CHR-ROM)))
+get bit mask (join "0x" ((item (16 * tile + scanline+9) of CHR-ROM)))
 
 define-atomic compute pixel
-if item mX+1 of evaluation line = -1 then
+if item mX of evaluation line = -1 then
 	; "Background pixel. TODO nametables"
 	set tmp to 0
 else
 	; "A sprite! That I can do! Fetch it from CHR and decode"
-	get pattern tile:  item ((item mX+1 of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX+1 of evaluation line) of secondary OAM))
-	set offset to mX - item (item mX+1 of evaluation line + 3) of secondary OAM
-	change offset by 1
-	set tmp to (2 * letter offset of lower mask) + letter offset of mask
+	get pattern tile:  item ((item mX of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX of evaluation line) of secondary OAM))
+	set offset to mX - item (item mX of evaluation line + 3) of secondary OAM
+	set tmp to (2 * letter offset+1 of lower mask) + letter offset+1 of mask
 	if tmp > 1 then
 		if tmp = 2 then
 			set tmp to "0xFF0000"
