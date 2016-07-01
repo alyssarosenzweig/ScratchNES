@@ -1,0 +1,14 @@
+define ; [val]
+
+define step CPU
+change cycles by 1
+
+define interrupt: vector [v]
+
+define mapper read (addr)
+
+when flag clicked
+initialize PPU
+forever
+    emulate frame
+end
