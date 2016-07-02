@@ -113,8 +113,6 @@ var sources = table.map(function(x, i) {
             instruction.push("set flagC to <" + operand + " > 255 or " + operand + " < 0>");
         }
 
-        instruction.push('say "' + x.assembler + '"');
-
         if(x.name != "JMP" && x.name != "JSR" && x.name != "RTI") {
             instruction.push("change PC by " + x.size);
         }
