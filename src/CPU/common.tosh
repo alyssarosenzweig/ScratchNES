@@ -52,7 +52,7 @@ mapper write 256 + S (((PC - (PC mod 256)))/256)
 set S to (S - 1) mod 256
 mapper write 256 + S (PC mod 256)
 set S to (S - 1) mod 256
-compute SR
+set SR to (128*flagN) + (64*flagV) + (32) + (16*flagB) + (8*flagD) + (4*flagI) + (2*flagZ) + (1*flagC)
 mapper write 256 + S SR
 set S to (S - 1) mod 256
 set flagI to 1
@@ -60,9 +60,6 @@ mapper read vector
 set tmp to M
 mapper read vector+1
 set PC to (M*256) + tmp
-
-define-atomic compute SR
-set SR to (128*flagN) + (64*flagV) + (32) + (16*flagB) + (8*flagD) + (4*flagI) + (2*flagZ) + (1*flagC)
 
 when flag clicked
 set A to 0
