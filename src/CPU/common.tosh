@@ -10,7 +10,7 @@ else
         if addr > 8192 and addr < 8200 then
             read PPU register (addr - 8192)
         else
-            if addr = 16405 then
+            if addr = 16406 then
                 read controller 1
             end
         end
@@ -24,7 +24,7 @@ else
 	if addr > 8191 and addr < 8200 then
 		write PPU register (addr - 8192) value: (value)
 	else
-		if addr = 16405 then
+		if addr = 16406 then
 			controller strobe (value)
 		else
 			if addr = 16404 then
