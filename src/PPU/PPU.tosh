@@ -33,7 +33,6 @@ repeat 64
 	end
 	change evaluation n by 4
 end
-
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
@@ -42,9 +41,8 @@ set lower mask to item 1 + (join "0x" ((item (16 * tile + scanline + table+1) of
 set mask to item 1 +  (join "0x" ((item (16 * tile + scanline + table+9) of CHR-ROM))) of bitmask
 
 define-atomic compute background pixel
-get pattern tile: BG: Nametable scanline: (mY mod 8) table: PPU Background pattern table
-set offset to mX mod 8
-set tmp to (2*letter offset + 1 of lower mask) + letter offset+1 of mask
+set offset to 1 + (mX mod 8)
+set tmp to (2*letter offset of BG: Plane 0) + letter offset of BG: Plane 1
 if tmp > 1 then
 	if tmp = 2 then
 		set tmp to "0xFF0000"
@@ -63,7 +61,8 @@ define-atomic compute pixel
 if mX mod 8 = 0 then
 	set PPU VRAM address to 8192 + (mX/8) + (32*(floor of (mY / 8)))
 	read PPU memory
-	set BG: Nametable to M
+	set BG: Plane 0 to item 1 + (join "0x" ((item (16 * M + PPU Background pattern table + (mY mod 8) +1) of CHR-ROM))) of bitmask
+	set BG: Plane 1 to item 1 +  (join "0x" ((item (16 * M + PPU Background pattern table + (mY mod 8) + 9) of CHR-ROM))) of bitmask
 end
 if item mX of evaluation line = -1 then
 	compute background pixel
