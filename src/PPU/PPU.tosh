@@ -41,10 +41,24 @@ get bit mask (join "0x" ((item (16 * tile + scanline+1) of CHR-ROM)))
 set lower mask to mask
 get bit mask (join "0x" ((item (16 * tile + scanline+9) of CHR-ROM)))
 
+define-atomic compute background pixel
+; "Fetch it from CHR and decode, not unlike sprites"
+; "Only a bit different indexing"
+set tmp to BG: Nametable*160000
+
 define-atomic compute pixel
+; "Perform BACKGROUND tasks"
+if mX mod 8 = 0 then
+	show variable PPU high address
+	show variable PPU low address
+	show variable BG: Nametable
+	set PPU high address to 32 + (PPU base nametable address*4) +  floor of (_)
+	set PPU low address to (mX / 8) + ((mY mod 7) * 32)
+	read PPU memory
+	set BG: Nametable to M
+end
 if item mX of evaluation line = -1 then
-	; "Background pixel. TODO nametables"
-	set tmp to 0
+	compute background pixel
 else
 	; "A sprite! That I can do! Fetch it from CHR and decode"
 	get pattern tile:  item ((item mX of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX of evaluation line) of secondary OAM))
@@ -66,6 +80,8 @@ else
 end
 
 define emulate frame
+set PPU high address to "0x20"
+set PPU low address to 0
 go to x: -128 y: 128
 set mY to -1
 ; "show variable mX"
@@ -112,6 +128,10 @@ set pen size to 1
 delete all of OAM
 repeat 256
 	add "0" to OAM
+end
+delete all of Nametables
+repeat 2048
+	add "0" to Nametables
 end
 hide
 
@@ -214,6 +234,15 @@ else
 			end
 		end
 	end
+end
+
+define incremement VRAM address
+change PPU low address by 1
+if PPU low address > 255 then
+	set PPU low address to 0
+	change PPU high address by 1
+	show variable PPU high address
+	show variable PPU low address
 end
 
 define write PPU memory (V)
