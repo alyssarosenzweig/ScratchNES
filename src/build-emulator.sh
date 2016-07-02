@@ -4,4 +4,5 @@ cat CPU.tosh
 echo ""
 cat PPU/PPU.tosh
 echo ""
+echo ""
 cat Input/input.tosh

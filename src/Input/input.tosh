@@ -1,4 +1,4 @@
-define read controller 0
+define read controller 1
 set M to item 1 of controller 1 state * 1
 delete 1 of controller 1 state
 
