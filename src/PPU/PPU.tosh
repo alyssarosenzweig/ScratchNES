@@ -37,9 +37,8 @@ end
 ; "TODO: buggy sprite overflow flag"
 
 define-atomic get pattern tile: (tile) scanline: (scanline) table: (table)
-get bit mask (join "0x" ((item (16 * tile + scanline + table+1) of CHR-ROM)))
-set lower mask to mask
-get bit mask (join "0x" ((item (16 * tile + scanline + table+9) of CHR-ROM)))
+set lower mask to item 1 + (join "0x" ((item (16 * tile + scanline + table+1) of CHR-ROM))) of bitmask
+set mask to item 1 +  (join "0x" ((item (16 * tile + scanline + table+9) of CHR-ROM))) of bitmask
 
 define-atomic compute background pixel
 ; "Fetch it from CHR and decode, not unlike sprites"
@@ -105,15 +104,15 @@ repeat 224
 		if PPU show bg = 1 or PPU show sprites = 1 then
 			repeat cycles
 				compute pixel
-				set pen color to (tmp*1)
+				set pen color to (tmp)
 				change mX by 1
 				change x by 1
 				compute pixel
-				set pen color to (tmp*1)
+				set pen color to (tmp)
 				change x by 1
 				change mX by 1
 				compute pixel
-				set pen color to (tmp*1)
+				set pen color to (tmp)
 				change x by 1
 				change mX by 1
 			end
@@ -158,19 +157,11 @@ else
 	end
 end
 
-define-atomic get bit mask (N)
-set temp to N
-set mask to ""
-repeat 8
-	set mask to (join (<temp mod 2 = 1> * 1) (mask))
-	set temp to (temp - temp mod 2) * 0.5
-end
-
 ; "TODO: use O(logN) lookup instead of O(N)"
 
 define-atomic write PPU register (N) value: (V)
 if N = 0 then
-	get bit mask (V)
+	set mask to item 1 + V of bitmask
 	set PPU base nametable address to 2 * letter 7 of mask + letter 8 of mask
 	set PPU VRAM increment to letter 6 of mask * 31 + 1
 	set PPU Sprite pattern table to letter 5 of mask * 4096
@@ -180,7 +171,7 @@ if N = 0 then
 	set PPU generate NMI to letter 1 of mask
 else
 	if N = 1 then
-		get bit mask (V)
+		set mask to item 1 + V of bitmask
 		set PPU grayscale to letter 8 of mask
 		set PPU show left8 bg to letter 7 of mask
 		set PPU show left8 sprites to letter 6 of mask
