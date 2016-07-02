@@ -45,10 +45,21 @@ define-atomic compute background pixel
 ; "Fetch it from CHR and decode, not unlike sprites"
 ; "Only a bit different indexing"
 get pattern tile: BG: Nametable scanline: (mY mod 8) table: PPU Background pattern table
-set tmp to BG: Nametable*160000
 set offset to mX mod 8
 set tmp to (2*letter offset + 1 of lower mask) + letter offset+1 of mask
-set tmp to 160000 * tmp
+if tmp > 1 then
+	if tmp = 2 then
+		set tmp to "0xFF0000"
+	else
+		set tmp to "0x00FF00"
+	end
+else
+	if tmp = 1 then
+		set tmp to "0x0000FF"
+	else
+		set tmp to "0x000000"
+	end
+end
 
 define-atomic compute pixel
 ; "Perform BACKGROUND tasks"
@@ -82,8 +93,7 @@ end
 define emulate frame
 go to x: -128 y: 128
 set mY to -1
-; "show variable mX"
-; "show variable mY"
+show list Nametables
 repeat 224
 	change mY by 1
 	evaluate sprites scanline:  (mY)
@@ -92,25 +102,29 @@ repeat 224
 	set mX to 0
 	repeat until mX > 254
 		step CPU
-		repeat cycles
-			compute pixel
-			set pen color to (tmp*1)
-			change mX by 1
-			change x by 1
-			compute pixel
-			set pen color to (tmp*1)
-			change x by 1
-			change mX by 1
-			compute pixel
-			set pen color to (tmp*1)
-			change x by 1
-			change mX by 1
+		if PPU show bg = 1 or PPU show sprites = 1 then
+			repeat cycles
+				compute pixel
+				set pen color to (tmp*1)
+				change mX by 1
+				change x by 1
+				compute pixel
+				set pen color to (tmp*1)
+				change x by 1
+				change mX by 1
+				compute pixel
+				set pen color to (tmp*1)
+				change x by 1
+				change mX by 1
+			end
+		else
+			change mX by 3 * cycles
 		end
 		set cycles to 0
 	end
 	pen up
 end
-set PPU vblank?1 to 1
+set PPU vblank? to 1
 if PPU generate NMI = 1 then
 	interrupt: vector "0xFFFA"
 end
@@ -135,9 +149,9 @@ hide
 
 define read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank?1 + 64 * PPU sprite 0?1 + 32 * PPU sprite overflow?1
+	set M to 128 * PPU vblank? + 64 * PPU sprite 0? + 32 * PPU sprite overflow?
 	set PPU address latch to 0
-	set PPU vblank?1 to 0
+	set PPU vblank? to 0
 else
 	if N = 7 then
 		read PPU memory
@@ -194,12 +208,15 @@ else
 						if PPU address latch = 0 then
 							; "TODO: is this correct?"
 							set PPU VRAM address to (V*256)
+							set PPU address latch to 1
 						else
 							change PPU VRAM address by V
+							set PPU address latch to 0
 						end
 					else
 						if N = 7 then
 							write PPU memory (V)
+							change PPU VRAM address by 1
 						end
 					end
 				end
@@ -234,9 +251,6 @@ else
 		end
 	end
 end
-
-define incremement VRAM address
-change PPU VRAM address by 1
 
 define write PPU memory (V)
 if PPU VRAM address < 32*256 then
