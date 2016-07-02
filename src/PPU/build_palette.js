@@ -18,7 +18,7 @@ var palette = fs.readFileSync(process.argv[2])
                                     }));
                     }
                     return arr.map(function(x) {
-                        return (65536*x[0]) + (256*x[1]) + x[0];
+                        return (65536*x[0]) + (256*x[1]) + x[2];
                     });
                 });
 
