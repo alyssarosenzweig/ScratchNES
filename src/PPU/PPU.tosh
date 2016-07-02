@@ -58,7 +58,11 @@ else
 	get pattern tile:  item ((item mX of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX of evaluation line) of secondary OAM)) table: PPU Sprite pattern table
 	set offset to mX - item (item mX of evaluation line + 3) of secondary OAM
 	set tmp to (2 * letter offset+1 of lower mask) + letter offset+1 of mask
-	set tmp to (item 13 + tmp of Palette) * 10000
+        if tmp = 0 then
+            compute background pixel
+        else
+	    set tmp to (item 13 + tmp of Palette) * 10000
+        end
 end
 
 define-atomic emulate frame
