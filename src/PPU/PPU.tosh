@@ -36,24 +36,24 @@ end
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
-define get pattern tile: (tile) scanline: (scanline)
-get bit mask (join "0x" ((item (16 * tile + scanline+1) of CHR-ROM)))
+define get pattern tile: (tile) scanline: (scanline) table: (table)
+get bit mask (join "0x" ((item (16 * tile + scanline + table+1) of CHR-ROM)))
 set lower mask to mask
-get bit mask (join "0x" ((item (16 * tile + scanline+9) of CHR-ROM)))
+get bit mask (join "0x" ((item (16 * tile + scanline + table+9) of CHR-ROM)))
 
 define-atomic compute background pixel
 ; "Fetch it from CHR and decode, not unlike sprites"
 ; "Only a bit different indexing"
+get pattern tile: BG: Nametable scanline: (mY mod 8) table: PPU Background pattern table
 set tmp to BG: Nametable*160000
+set offset to mX mod 8
+set tmp to (2*letter offset + 1 of lower mask) + letter offset+1 of mask
+set tmp to 160000 * tmp
 
 define-atomic compute pixel
 ; "Perform BACKGROUND tasks"
 if mX mod 8 = 0 then
-	show variable PPU high address
-	show variable PPU low address
-	show variable BG: Nametable
-	set PPU high address to 32 + (PPU base nametable address*4) +  floor of (_)
-	set PPU low address to (mX / 8) + ((mY mod 7) * 32)
+	set PPU VRAM address to 8192 + (mX/8) + (32*(floor of (mY / 8)))
 	read PPU memory
 	set BG: Nametable to M
 end
@@ -61,7 +61,7 @@ if item mX of evaluation line = -1 then
 	compute background pixel
 else
 	; "A sprite! That I can do! Fetch it from CHR and decode"
-	get pattern tile:  item ((item mX of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX of evaluation line) of secondary OAM))
+	get pattern tile:  item ((item mX of evaluation line))+1 of secondary OAM scanline:  (mY - (item (item mX of evaluation line) of secondary OAM)) table: PPU Sprite pattern table
 	set offset to mX - item (item mX of evaluation line + 3) of secondary OAM
 	set tmp to (2 * letter offset+1 of lower mask) + letter offset+1 of mask
 	if tmp > 1 then
@@ -80,8 +80,6 @@ else
 end
 
 define emulate frame
-set PPU high address to "0x20"
-set PPU low address to 0
 go to x: -128 y: 128
 set mY to -1
 ; "show variable mX"
@@ -194,9 +192,10 @@ else
 				else
 					if N = 6 then
 						if PPU address latch = 0 then
-							set PPU high address to V
+							; "TODO: is this correct?"
+							set PPU VRAM address to (V*256)
 						else
-							set PPU low address to V
+							change PPU VRAM address by V
 						end
 					else
 						if N = 7 then
@@ -218,17 +217,17 @@ repeat 256
 end
 
 define read PPU memory
-if PPU high address < 32 then
-	set M to item (1 + PPU high address * 256 + PPU low address) of Pattern tables
+if PPU VRAM address < 32*256 then
+	set M to item (1 + PPU VRAM address) of Pattern tables
 else
-	if PPU high address < 48 then
-		set M to item (PPU high address * 256 + PPU low address - 8191) of Nametables
+	if PPU VRAM address < 48*256 then
+		set M to item (PPU VRAM address - 8191) of Nametables
 	else
-		if PPU high address < 63 then
-			set M to item (PPU high address * 256 + PPU low address - 12287) of Nametables
+		if PPU VRAM address < 63*256 then
+			set M to item (PPU VRAM address - 12287) of Nametables
 		else
-			if PPU high address < 64 then
-				set M to item (PPU low address mod 32 + 1) of Palette
+			if PPU VRAM address < 64*256 then
+				set M to item (PPU VRAM address mod 32 + 1) of Palette
 			else
 				; "TODO: PPU memory mirroring"
 			end
@@ -237,26 +236,20 @@ else
 end
 
 define incremement VRAM address
-change PPU low address by 1
-if PPU low address > 255 then
-	set PPU low address to 0
-	change PPU high address by 1
-	show variable PPU high address
-	show variable PPU low address
-end
+change PPU VRAM address by 1
 
 define write PPU memory (V)
-if PPU high address < 32 then
-	replace item 1 + PPU high address * 256 + PPU low address of Pattern tables with V
+if PPU VRAM address < 32*256 then
+	replace item 1 + PPU VRAM address of Pattern tables with V
 else
-	if PPU high address < 48 then
-		replace item PPU high address * 256 + PPU low address - 8191 of Nametables with V
+	if PPU VRAM address < 48*256 then
+		replace item PPU VRAM address - 8191 of Nametables with V
 	else
-		if PPU high address < 63 then
-			replace item PPU high address * 256 + PPU low address - 12287 of Nametables with V
+		if PPU VRAM address < 63*256 then
+			replace item PPU VRAM address - 12287 of Nametables with V
 		else
-			if PPU high address < 64 then
-				replace item PPU low address mod 32 + 1 of Palette with V
+			if PPU VRAM address < 64*256 then
+				replace item PPU VRAM address mod 32 + 1 of Palette with V
 			else
 				; "TODO: PPU memory mirroring"
 			end
