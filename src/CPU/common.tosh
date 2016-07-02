@@ -86,5 +86,3 @@ end
 
 define-atomic step CPU
 mapper read (PC)
-set opcode to M
-change line by 1
