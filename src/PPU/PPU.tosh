@@ -77,7 +77,6 @@ end
 define-atomic emulate frame
 go to x: -128 y: 128
 set mY to -1
-show list Nametables
 repeat 224
 	change mY by 1
 	evaluate sprites scanline:  (mY)
@@ -215,7 +214,7 @@ end
 
 define-atomic read PPU memory
 if PPU VRAM address < 32 * 256 then
-	set M to item (1 + PPU VRAM address) of Pattern tables
+	set M to item (1 + PPU VRAM address) of CHR-ROM
 else
 	if PPU VRAM address < 48 * 256 then
 		set M to item (PPU VRAM address - 8191) of Nametables
@@ -234,7 +233,7 @@ end
 
 define-atomic write PPU memory (V)
 if PPU VRAM address < 32 * 256 then
-	replace item 1 + PPU VRAM address of Pattern tables with V
+	replace item 1 + PPU VRAM address of CHR-ROM with V
 else
 	if PPU VRAM address < 48 * 256 then
 		replace item PPU VRAM address - 8191 of Nametables with V
