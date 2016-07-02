@@ -1,4 +1,4 @@
-define-atomic evaluate sprites scanline: (N)
+define-atomic-atomic evaluate sprites scanline: (N)
 delete all of secondary OAM
 delete all of evaluation line
 repeat 32
@@ -36,12 +36,12 @@ end
 ; "TODO: evaluate sprites in secondary OAM"
 ; "TODO: buggy sprite overflow flag"
 
-define get pattern tile: (tile) scanline: (scanline) table: (table)
+define-atomic get pattern tile: (tile) scanline: (scanline) table: (table)
 get bit mask (join "0x" ((item (16 * tile + scanline + table+1) of CHR-ROM)))
 set lower mask to mask
 get bit mask (join "0x" ((item (16 * tile + scanline + table+9) of CHR-ROM)))
 
-define-atomic compute background pixel
+define-atomic-atomic compute background pixel
 ; "Fetch it from CHR and decode, not unlike sprites"
 ; "Only a bit different indexing"
 get pattern tile: BG: Nametable scanline: (mY mod 8) table: PPU Background pattern table
@@ -61,7 +61,7 @@ else
 	end
 end
 
-define-atomic compute pixel
+define-atomic-atomic compute pixel
 ; "Perform BACKGROUND tasks"
 if mX mod 8 = 0 then
 	set PPU VRAM address to 8192 + (mX/8) + (32*(floor of (mY / 8)))
@@ -90,7 +90,7 @@ else
 	end
 end
 
-define emulate frame
+define-atomic emulate frame
 go to x: -128 y: 128
 set mY to -1
 show list Nametables
@@ -133,7 +133,7 @@ repeat until cycles > 2380
 end
 set cycles to 0
 
-define initialize PPU
+define-atomic initialize PPU
 pen up
 clear
 set pen size to 1
@@ -147,7 +147,7 @@ repeat 2048
 end
 hide
 
-define read PPU register (N)
+define-atomic read PPU register (N)
 if N = 2 then
 	set M to 128 * PPU vblank? + 64 * PPU sprite 0? + 32 * PPU sprite overflow?
 	set PPU address latch to 0
@@ -158,7 +158,7 @@ else
 	end
 end
 
-define get bit mask (N)
+define-atomic get bit mask (N)
 set temp to N
 set mask to ""
 repeat 8
@@ -168,7 +168,7 @@ end
 
 ; "TODO: use O(logN) lookup instead of O(N)"
 
-define write PPU register (N) value: (V)
+define-atomic write PPU register (N) value: (V)
 if N = 0 then
 	get bit mask (V)
 	set PPU base nametable address to 2 * letter 7 of mask + letter 8 of mask
@@ -225,7 +225,7 @@ else
 	end
 end
 
-define OAM DMA (pagebase)
+define-atomic OAM DMA (pagebase)
 set temp to 0
 repeat 256
 	mapper read (256 * pagebase + PPU OAMADDR + temp)
@@ -233,7 +233,7 @@ repeat 256
 	replace item temp of OAM with M
 end
 
-define read PPU memory
+define-atomic read PPU memory
 if PPU VRAM address < 32*256 then
 	set M to item (1 + PPU VRAM address) of Pattern tables
 else
@@ -252,7 +252,7 @@ else
 	end
 end
 
-define write PPU memory (V)
+define-atomic write PPU memory (V)
 if PPU VRAM address < 32*256 then
 	replace item 1 + PPU VRAM address of Pattern tables with V
 else
