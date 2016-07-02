@@ -6,7 +6,7 @@ if addr < 8192 then
 else
 	if addr > 8192 and addr < 8200 then
 		read PPU register (addr - 8192)
-   else
+       else
 		if addr = 16405 then
 			read controller 1
 		else
@@ -14,7 +14,7 @@ else
 				set M to (join "0x" (item ((addr - 32768) mod 16384 + 1) of PRG-ROM))
 			end
 		end
-   end
+       end
 end
 
 define-atomic mapper write (addr) (value)
@@ -29,12 +29,13 @@ else
 		else
 			if addr = 16404 then
 				OAM DMA (value)
-         else
-		      if addr > 32768 then
+                         else
+                              if addr > 32768 then
 					say "Writing to ROM isn't very nice, you know..."
-		      end
-      end
-	end
+                              end
+                          end
+                end
+        end
 end
 
 define-atomic PLP
