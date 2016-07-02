@@ -1,0 +1,19 @@
+define read controller 0
+set M to item 1 of controller 1 state * 1
+delete 1 of controller 1 state
+
+define controller strobe (value)
+if controller strobe = 1 and value = 0 then
+    delete all of controller 1 state
+    add <key z pressed?> to controller 1 state
+    add <key x pressed?> to controller 1 state
+    add <key s pressed?> to controller 1 state
+    add <key space pressed?> to controller 1 state
+    add <key up arrow pressed?> to controller 1 state
+    add <key down arrow pressed?> to controller 1 state
+    add <key left arrow pressed?> to controller 1 state
+    add <key right arrow pressed?> to controller 1 state
+    set controller strobe to value
+else
+    set controller strobe to value
+end
