@@ -1,2 +1,4 @@
-R, tmp, N, Z, C
-set tmp to X - OP
+R
+set flagC to <not X < OP>
+set flagZ to <X = OP>
+set flagN to <((X - OP) + 256) mod 256 > 127>
