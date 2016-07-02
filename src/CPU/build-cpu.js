@@ -16,8 +16,7 @@ var table = JSON.parse(fs.readFileSync("bin/table.json").toString());
 
 // jump table emission, etc.
 var emission = [
-    "mapper read PC",
-    "set opcode to M"
+    "mapper read PC"
 ];
 
 var sources = table.map(function(x, i) {
@@ -150,14 +149,14 @@ function bst(sources, start, end) {
 
     if(start + 1 == end)
         return [
-            "if opcode = " + start + " then",
+            "if M = " + start + " then",
                 sources[start],
             "else",
                 sources[end],
             "end"
             ];
 
-    var emission = ["if opcode < " + (start+end+1)/2 + " then"]
+    var emission = ["if M < " + (start+end+1)/2 + " then"]
         .concat(bst(sources, start, start + (end-start-1) / 2))
         .concat(["else"])
         .concat(bst(sources, start + (end-start+1) / 2, end))
