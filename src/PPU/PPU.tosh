@@ -1,5 +1,6 @@
 define-atomic evaluate sprites scanline: (N)
 delete all of secondary OAM
+delete all of scanline bitmaps
 delete all of evaluation line
 repeat 32
 	add "255" to secondary OAM
@@ -40,32 +41,8 @@ define-atomic get pattern tile: (tile) scanline: (scanline) table: (table)
 set lower mask to item (1 + (join "0x" (item (16 * tile + scanline + table + 1) of CHR-ROM))) of bitmask
 set mask to item (1 + (join "0x" (item (16 * tile + scanline + table + 9) of CHR-ROM))) of bitmask
 
-define-atomic compute pixel
-if mX mod 8 = 0 then
-	set PPU VRAM address to 8192 + mX / 8 + 32 * floor of (mY / 8)
-	read PPU memory
-	set BG: Plane 0 to item (1 + (join "0x" (item (16 * M + PPU Background pattern table + mY mod 8 + 1) of CHR-ROM))) of bitmask
-	set BG: Plane 1 to item (1 + (join "0x" (item (16 * M + PPU Background pattern table + mY mod 8 + 9) of CHR-ROM))) of bitmask
-	set PPU VRAM address to 9152 + floor of (mX / 16) + 16 * floor of (mY / 16)
-	read PPU memory
-	set mask to item (1 + M) of bitmask
-	set offset to 2 * <mX mod 16 > 7> + 4 * <mY mod 16 > 7>
-	set BG: Palette to 8 * letter (offset + 1) of mask + 4 * letter (offset + 2) of mask + 1
-end
-if item mX of evaluation line = -1 then
-	set tmp to item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette
-else
-	get pattern tile:  (item (item mX of evaluation line + 1) of secondary OAM) scanline:  (mY - item item mX of evaluation line of secondary OAM) table:  (PPU Sprite pattern table)
-	set offset to mX - item (item mX of evaluation line + 3) of secondary OAM
-	set tmp to 2 * letter (offset + 1) of lower mask + letter (offset + 1) of mask
-	if tmp = 0 then
-		set tmp to item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette
-	else
-		set tmp to item (17 + tmp) of Palette
-	end
-end
-
 define-atomic emulate frame
+clear
 go to x: -128 y: 128
 set mY to -1
 repeat 224
@@ -76,10 +53,30 @@ repeat 224
 	set mX to 0
 	repeat until mX > 254
 		step CPU
+		change cycles by 1
 		if PPU show bg = 1 or PPU show sprites = 1 then
-			repeat 3*cycles
-				compute pixel
-				set pen color to (tmp)
+			repeat cycles
+				if mX mod 8 = 0 then
+					read PPU memory @ (8192 + mX / 8 + 32 * floor of (mY / 8))
+					set offset to 16 * M + PPU Background pattern table + mY mod 8 
+					set BG: Plane 0 to item (1 + (join "0x" (item (offset + 1) of CHR-ROM))) of bitmask
+					set BG: Plane 1 to item (1 + (join "0x" (item (offset + 9) of CHR-ROM))) of bitmask
+					read PPU memory @ (9152 + floor of (mX / 16) + 16 * floor of (mY / 16))
+					set offset to 2 * <mX mod 16 > 7> + 4 * <mY mod 16 > 7>
+					set BG: Palette to 8 * letter (offset + 1) of item (1 + M) of bitmask + 4 * letter (offset + 2) of item (1 + M) of bitmask + 1
+				end
+				if item mX+1 of evaluation line < 1 then
+					set pen color to (item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette)
+				else
+					get pattern tile:  (item (item mX+1 of evaluation line + 1) of secondary OAM) scanline:  (mY - item item mX+1 of evaluation line of secondary OAM) table:  (PPU Sprite pattern table)
+					set offset to mX - item (item mX+1 of evaluation line + 3) of secondary OAM
+					set tmp to 2 * letter (offset + 1) of lower mask + letter (offset + 1) of mask
+					if tmp = 0 then
+						set pen color to (item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette)
+					else
+						set pen color to (item (17 + tmp) of Palette)
+					end
+				end
 				change mX by 1
 				change x by 1
 			end
@@ -207,6 +204,25 @@ else
 		else
 			if PPU VRAM address < 64 * 256 then
 				set M to item (PPU VRAM address mod 32 + 1) of Palette
+			else
+				; "TODO: PPU memory mirroring"
+			end
+		end
+	end
+end
+
+define-atomic read PPU memory @ [VRAM address]
+if VRAM address < 32 * 256 then
+	set M to item (1 + VRAM address) of CHR-ROM
+else
+	if PPU VRAM address < 48 * 256 then
+		set M to item (VRAM address - 8191) of Nametables
+	else
+		if PPU VRAM address < 63 * 256 then
+			set M to item (VRAM address - 12287) of Nametables
+		else
+			if PPU VRAM address < 64 * 256 then
+				set M to item (VRAM address mod 32 + 1) of Palette
 			else
 				; "TODO: PPU memory mirroring"
 			end
