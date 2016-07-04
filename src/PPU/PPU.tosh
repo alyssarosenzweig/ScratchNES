@@ -82,13 +82,13 @@ repeat 224
 					set BG: Palette to 8 * letter (offset + 1) of item (1 + M) of bitmask + 4 * letter (offset + 2) of item (1 + M) of bitmask + 1
 				end
 				if item mX+1 of evaluation line < 1 then
-					set pen color to (item (BG: Palette + (2*letter mX mod 8 of BG: Plane 0) + letter mX mod 8 of BG: Plane 1) of Palette)
+					set pen color to (item (BG: Palette + letter 2+mX mod 8 of BG: Plane 0) of Palette)
 				else
 					get pattern tile:  (item (item mX+1 of evaluation line + 1) of secondary OAM) scanline:  (mY - item item mX+1 of evaluation line of secondary OAM) table:  (PPU Sprite pattern table)
 					set offset to mX - item (item mX+1 of evaluation line + 3) of secondary OAM
-					set tmp to letter (offset + 1) of mask
+					set tmp to letter (offset + 2) of mask
 					if tmp = 0 then
-						; "set pen color to (item (BG: Palette + letter fine x of BG: Plane 0) of Palette)"
+                                                set pen color to (item (BG: Palette + letter 2+mX mod 8 of BG: Plane 0) of Palette)
 					else
 						set pen color to (item (17 + tmp) of Palette)
 					end
