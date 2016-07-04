@@ -129,7 +129,7 @@ var sources = table.map(function(x, i) {
             }
         }
 
-        instruction.push("say '" + x.assembler + "'");
+//        instruction.push("say '" + x.assembler + "'");
 
         return instruction.join("\n");
     } else {
