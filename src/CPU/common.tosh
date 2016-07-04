@@ -80,8 +80,16 @@ when p key pressed
 step CPU
 
 when f key pressed
+emulate frame
+emulate frame
+emulate frame
+emulate frame
+set line to 0
+show variable opcode
+reset timer
 forever
         emulate frame
+        set opcode to line / timer
 end
 
 define-atomic step CPU
