@@ -1,6 +1,5 @@
 define-atomic evaluate sprites scanline: (N)
 delete all of secondary OAM
-delete all of scanline bitmaps
 delete all of evaluation line
 repeat 32
 	add "255" to secondary OAM
@@ -38,8 +37,27 @@ end
 ; "TODO: buggy sprite overflow flag"
 
 define-atomic get pattern tile: (tile) scanline: (scanline) table: (table)
-set lower mask to item (1 + (join "0x" (item (16 * tile + scanline + table + 1) of CHR-ROM))) of bitmask
-set mask to item (1 + (join "0x" (item (16 * tile + scanline + table + 9) of CHR-ROM))) of bitmask
+set mask to item (16 * tile + scanline + table + 1) of oCHR
+
+when 1 key pressed
+ask "Cual?" and wait
+if answer = "format chr" then
+	format chr
+end
+
+; "optimizes CHR-ROM"
+
+define-atomic format chr
+delete all of oCHR
+set temp to 1
+repeat length of CHR-ROM
+	set BG: Plane 0 to item (1 + (join "0x" (item temp of CHR-ROM))) of bitmask
+	set BG: Plane 1 to item (1 + (join "0x" (item (temp+8) of CHR-ROM))) of bitmask
+	set BG: Plane 0 to join "1" (BG: Plane 0)
+	set BG: Plane 1 to join "1" (BG: Plane 1)
+	add (BG: Plane 0) + (BG: Plane 1*2) to oCHR
+	change temp by 1
+end
 
 define-atomic emulate frame
 clear
@@ -53,26 +71,24 @@ repeat 224
 	set mX to 0
 	repeat until mX > 254
 		step CPU
-		change cycles by 1
 		if PPU show bg = 1 or PPU show sprites = 1 then
 			repeat cycles
 				if mX mod 8 = 0 then
 					read PPU memory @ (8192 + mX / 8 + 32 * floor of (mY / 8))
 					set offset to 16 * M + PPU Background pattern table + mY mod 8 
-					set BG: Plane 0 to item (1 + (join "0x" (item (offset + 1) of CHR-ROM))) of bitmask
-					set BG: Plane 1 to item (1 + (join "0x" (item (offset + 9) of CHR-ROM))) of bitmask
+					set BG: Plane 0 to item (offset + 1) of oCHR
 					read PPU memory @ (9152 + floor of (mX / 16) + 16 * floor of (mY / 16))
 					set offset to 2 * <mX mod 16 > 7> + 4 * <mY mod 16 > 7>
 					set BG: Palette to 8 * letter (offset + 1) of item (1 + M) of bitmask + 4 * letter (offset + 2) of item (1 + M) of bitmask + 1
 				end
 				if item mX+1 of evaluation line < 1 then
-					set pen color to (item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette)
+					set pen color to (item (BG: Palette + (2*letter mX mod 8 of BG: Plane 0) + letter mX mod 8 of BG: Plane 1) of Palette)
 				else
 					get pattern tile:  (item (item mX+1 of evaluation line + 1) of secondary OAM) scanline:  (mY - item item mX+1 of evaluation line of secondary OAM) table:  (PPU Sprite pattern table)
 					set offset to mX - item (item mX+1 of evaluation line + 3) of secondary OAM
-					set tmp to 2 * letter (offset + 1) of lower mask + letter (offset + 1) of mask
+					set tmp to letter (offset + 1) of mask
 					if tmp = 0 then
-						set pen color to (item (BG: Palette + 2 * letter (1 + mX mod 8) of BG: Plane 1 + letter (1 + mX mod 8) of BG: Plane 0) of Palette)
+						; "set pen color to (item (BG: Palette + letter fine x of BG: Plane 0) of Palette)"
 					else
 						set pen color to (item (17 + tmp) of Palette)
 					end

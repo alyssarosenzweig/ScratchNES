@@ -10,6 +10,8 @@ emit("ORA", function(a,b){return a|b});
 emit("AND", function(a,b){return a&b});
 emit("hex", function(a,b){return ((a<<4)|b).toString(16)});
 emit("bitmask", function(a,b){return ("00000000"+((a<<4)|b).toString(2)).substr(-8,8)});
+emit("obitmask", function(a,b){return "1" + (("00000000"+((a<<4)|b).toString(2)).substr(-8,8))});
+emit("dobitmask", function(a,b){return 2 * ("1" + (("00000000"+((a<<4)|b).toString(2)).substr(-8,8)))});
 
 function emit(name, func) {
     var emission = [];
