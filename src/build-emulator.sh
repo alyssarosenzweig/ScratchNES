@@ -6,3 +6,5 @@ cat PPU/PPU.tosh
 echo ""
 echo ""
 cat Input/input.tosh
+echo ""
+cat ROM/ROM.tosh
