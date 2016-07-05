@@ -1,0 +1,13 @@
+define-atomic unpack ROM with (N) banks of PRG-ROM and (P) banks of CHR-ROM
+set temp to 17
+delete all of PRG-ROM
+delete all of CHR-ROM
+repeat (N*16384)
+    add item temp of iNES ROM to PRG-ROM
+    change temp by 1
+end
+repeat (P*8192)
+    add item temp of iNES ROM to CHR-ROM
+end
+format prg
+format chr
