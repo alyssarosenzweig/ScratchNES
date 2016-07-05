@@ -3,12 +3,12 @@ define ; [comment]
 define-atomic format prg
 delete all of oPRG
 set tmp to 1
-repeat length of PRG-ROM - 1
+repeat 16384
     add (join "0x" (item tmp of PRG-ROM)) to oPRG
     change tmp by 1
 end
 set tmp to 1
-repeat length of PRG-ROM
+repeat 16384
     add (join "0x" (item tmp of PRG-ROM)) to oPRG
     change tmp by 1
 end

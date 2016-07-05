@@ -1,4 +1,4 @@
 R
-set flagC to <not OP < X>
+set flagC to <not X < OP>
 set flagZ to <X = OP>
 set flagN to <OP > X>
