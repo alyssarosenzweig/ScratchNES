@@ -9,6 +9,6 @@ var arr = require("fs").readFileSync(process.argv[2])
                  return 'add "' + line + '" to ' + process.argv[3];
              });
 
-console.log("when this sprite clicked");
+console.log("when q key pressed");
 console.log("delete all of " + process.argv[3]);
 console.log(arr.join("\n"));
