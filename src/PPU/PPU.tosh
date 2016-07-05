@@ -1,6 +1,8 @@
 define-atomic evaluate sprites scanline: (N)
 delete all of secondary OAM
 delete all of evaluation line
+delete all of secondary bitmaps
+delete all of secondary Xt
 repeat 32
 	add "255" to secondary OAM
 	add "-1" to evaluation line
@@ -16,11 +18,7 @@ set evaluation n to 1
 set evaluation slot to 1
 repeat 64
 	if evaluation slot < 32 and not N < item evaluation n of OAM and item evaluation n of OAM + 8 > N then
-		replace item evaluation slot of secondary OAM with item evaluation n of OAM
-		replace item evaluation slot + 1 of secondary OAM with item (evaluation n + 1) of OAM
-		replace item evaluation slot + 2 of secondary OAM with item (evaluation n + 2) of OAM
 		set temp to item (evaluation n + 3) of OAM
-		replace item evaluation slot + 3 of secondary OAM with temp
 		replace item temp of evaluation line with evaluation slot
 		replace item temp + 1 of evaluation line with evaluation slot
 		replace item temp + 2 of evaluation line with evaluation slot
@@ -29,7 +27,10 @@ repeat 64
 		replace item temp + 5 of evaluation line with evaluation slot
 		replace item temp + 6 of evaluation line with evaluation slot
 		replace item temp + 7 of evaluation line with evaluation slot
-		change evaluation slot by 4
+		get pattern tile:  (item (evaluation n + 1) of OAM) scanline:  (mY - item evaluation n of OAM) table:  (PPU Sprite pattern table)
+		add mask to secondary bitmaps
+		add temp - 3 to secondary Xt
+		change evaluation slot by 1
 	end
 	change evaluation n by 4
 end
@@ -43,6 +44,10 @@ when 1 key pressed
 ask "Cual?" and wait
 if answer = "format chr" then
 	format chr
+else
+	if answer = "format prg" then
+		format prg
+	end
 end
 
 ; "optimizes CHR-ROM"
@@ -62,6 +67,30 @@ end
 when q key pressed
 emulate frame
 
+define-atomic VBlank
+set PPU vblank?11121111 to 1
+if PPU generate NMI = 1 then
+	interrupt: vector "0xFFFA"
+end
+repeat until cycles > 2380
+	step CPU
+end
+set cycles to 0
+
+define-atomic skip frame
+; "TODO: sprite 0 hit etc?"
+set mY to -1
+repeat 224
+	change mY by 1
+	repeat until mX > 254
+		step CPU
+		change mX by 3 * cycles
+		set cycles to 0
+	end
+	; "TODO: HBlank"
+end
+VBlank
+
 define-atomic emulate frame
 go to x: -128 y: 128
 set mY to -1
@@ -75,12 +104,12 @@ repeat 224
 	set mX to 0
 	repeat until mX > 254
 		step CPU
+		step CPU
 		if PPU show bg = 1 or PPU show sprites = 1 then
 			repeat cycles
 				if mX mod 8 = 0 then
 					read PPU memory @ (8192 + mX / 8 + 32 * floor of (mY / 8))
-					set offset to 16 * M + PPU Background pattern table + mY mod 8
-					set BG: Plane 0 to item (offset + 1) of oCHR
+					set BG: Plane 0 to item (16 * M + PPU Background pattern table + mY mod 8 + 1) of oCHR
 					read PPU memory @ (9152 + floor of (mX / 16) + 16 * floor of (mY / 16))
 					set offset to 2 * <mX mod 16 > 7> + 4 * <mY mod 16 > 7>
 					set BG: Palette to 8 * letter (offset + 1) of item (1 + M) of bitmask + 4 * letter (offset + 2) of item (1 + M) of bitmask + 1
@@ -88,9 +117,7 @@ repeat 224
 				if item (mX + 1) of evaluation line < 1 then
 					set color to item (BG: Palette + letter (2 + mX mod 8) of BG: Plane 0) of Palette
 				else
-					get pattern tile:  (item (item (mX + 1) of evaluation line + 1) of secondary OAM) scanline:  (mY - item item (mX + 1) of evaluation line of secondary OAM) table:  (PPU Sprite pattern table)
-					set offset to mX - item (item (mX + 1) of evaluation line + 3) of secondary OAM
-					set tmp to letter (offset + 3) of mask
+					set tmp to letter (mX - item item (mX + 1) of evaluation line of secondary Xt) of item item (mX + 1) of evaluation line of secondary bitmaps
 					if tmp = 0 then
 						set color to item (BG: Palette + letter (2 + mX mod 8) of BG: Plane 0) of Palette
 					else
@@ -119,14 +146,7 @@ repeat 224
 	end
 	pen up
 end
-set PPU vblank?1112 to 1
-if PPU generate NMI = 1 then
-	interrupt: vector "0xFFFA"
-end
-repeat until cycles > 2380
-	step CPU
-end
-set cycles to 0
+VBlank
 
 define-atomic initialize PPU
 pen up
@@ -151,9 +171,9 @@ hide
 
 define-atomic read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank?1112 + 64 * PPU sprite 0?1112 + 32 * PPU sprite overflow?1112
+	set M to 128 * PPU vblank?11121111 + 64 * PPU sprite 0?11121111 + 32 * PPU sprite overflow?11121111
 	set PPU address latch to 0
-	set PPU vblank?1112 to 0
+	set PPU vblank?11121111 to 0
 else
 	if N = 7 then
 		read PPU memory
@@ -226,6 +246,7 @@ repeat 256
 	change temp by 1
 	replace item temp of OAM with M
 end
+change cycles by 513
 
 define-atomic read PPU memory
 if PPU VRAM address < 32 * 256 then
