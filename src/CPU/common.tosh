@@ -1,8 +1,21 @@
 define ; [comment]
 
+define-atomic format prg
+delete all of oPRG
+set tmp to 1
+repeat length of PRG-ROM - 1
+    add (join "0x" (item tmp of PRG-ROM)) to oPRG
+    change tmp by 1
+end
+set tmp to 1
+repeat length of PRG-ROM
+    add (join "0x" (item tmp of PRG-ROM)) to oPRG
+    change tmp by 1
+end
+
 define-atomic mapper read (addr)
 if addr > 32767 then
-        set M to (join "0x" (item ((addr - 32768) mod 16384 + 1) of PRG-ROM))
+    set M to item (addr - 32767) of oPRG
 else
     if addr < 8192 then
         set M to item (addr mod 2048 + 1) of RAM
@@ -19,47 +32,47 @@ end
 
 define-atomic mapper write (addr) (value)
 if addr < 8192 then
-	replace item addr mod 2048 + 1 of RAM with value
+    replace item addr mod 2048 + 1 of RAM with value
 else
-	if addr > 8191 and addr < 8200 then
-		write PPU register (addr - 8192) value: (value)
-	else
-		if addr = 16406 then
-			controller strobe (value)
-		else
-			if addr = 16404 then
-				OAM DMA (value)
-                         else
-                              if addr > 32768 then
-					say "Writing to ROM isn't very nice, you know..."
-                              end
-                          end
+    if addr > 8191 and addr < 8200 then
+        write PPU register (addr - 8192) value:  (value)
+    else
+        if addr = 16406 then
+            controller strobe (value)
+        else
+            if addr = 16404 then
+                OAM DMA (value)
+            else
+                if addr > 32768 then
+                    say "Writing to ROM isn't very nice, you know..."
                 end
+            end
         end
+    end
 end
 
 define-atomic PLP
-set flagN to < (item (join (letter 1 of M) "8")+1 of AND) = 8>
-set flagV to < (item (join (letter 1 of M) "4")+1 of AND) = 4>
-set flagB to < (item (join (letter 1 of M) "1")+1 of AND) = 1>
-set flagD to < (item (join (letter 2 of M) "8")+1 of AND) = 8>
-set flagI to < (item (join (letter 2 of M) "4")+1 of AND) = 4>
-set flagZ to < (item (join (letter 2 of M) "2")+1 of AND) = 2>
-set flagC to < (item (join (letter 2 of M) "1")+1 of AND) = 1>
+set flagN to <item ((join (letter 1 of M) "8") + 1) of AND = 8>
+set flagV to <item ((join (letter 1 of M) "4") + 1) of AND = 4>
+set flagB to <item ((join (letter 1 of M) "1") + 1) of AND = 1>
+set flagD to <item ((join (letter 2 of M) "8") + 1) of AND = 8>
+set flagI to <item ((join (letter 2 of M) "4") + 1) of AND = 4>
+set flagZ to <item ((join (letter 2 of M) "2") + 1) of AND = 2>
+set flagC to <item ((join (letter 2 of M) "1") + 1) of AND = 1>
 
 define-atomic interrupt: vector [vector]
-mapper write 256 + S (((PC - (PC mod 256)))/256)
+mapper write (256 + S) ((PC - PC mod 256) / 256)
 set S to (S - 1) mod 256
-mapper write 256 + S (PC mod 256)
+mapper write (256 + S) (PC mod 256)
 set S to (S - 1) mod 256
-set SR to (128*flagN) + (64*flagV) + (32) + (16*flagB) + (8*flagD) + (4*flagI) + (2*flagZ) + (1*flagC)
-mapper write 256 + S SR
+set SR to 128 * flagN + 64 * flagV + 0 + 16 * flagB + 8 * flagD + 4 * flagI + 2 * flagZ + 1 * flagC
+mapper write (256 + S) (SR)
 set S to (S - 1) mod 256
 set flagI to 1
-mapper read vector
+mapper read (vector)
 set tmp to M
-mapper read vector+1
-set PC to (M*256) + tmp
+mapper read (vector + 1)
+set PC to M * 256 + tmp
 
 when flag clicked
 set A to 0
@@ -67,12 +80,9 @@ set X to 0
 set Y to 0
 set S to "0xFD"
 set PC to 49152
-show variable PC
-set line to 0
-show variable line
 delete all of RAM
 repeat 2048
-	add "0" to RAM
+    add "0" to RAM
 end
 initialize PPU
 
@@ -88,9 +98,22 @@ set line to 0
 show variable opcode
 reset timer
 forever
-        emulate frame
-        set opcode to line / timer
+    emulate frame
+    skip frame
+    skip frame
+    skip frame
+    skip frame
+    skip frame
+    skip frame
+    change line by 7
+    set opcode to line / timer
 end
 
 define-atomic step CPU
-mapper read (PC)
+if PC > 32767 then
+    set M to item (PC - 32767) of oPRG
+else
+    if PC < 8192 then
+        set M to item (PC mod 2048 + 1) of RAM
+    end
+end
