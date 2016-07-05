@@ -79,7 +79,10 @@ set A to 0
 set X to 0
 set Y to 0
 set S to "0xFD"
-set PC to 49152
+mapper read 65532
+set PC to M
+mapper read 65533
+change PC by M * 256
 delete all of RAM
 repeat 2048
     add "0" to RAM
