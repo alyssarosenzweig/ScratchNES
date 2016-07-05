@@ -1,3 +1,6 @@
 mapper read PC+1
-mapper read M
-set address to M + Y + flagC
+set temp to M
+mapper read (temp)
+set address to M
+mapper read (temp+1)
+set address to address + (256*M) + Y + flagC
