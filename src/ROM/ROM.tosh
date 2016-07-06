@@ -1,3 +1,20 @@
+when 1 key pressed
+ask "Cual?" and wait
+if answer = "format chr" then
+	format chr
+else
+	if answer = "format prg" then
+		format prg
+	else
+		if answer = "irom" then
+			ask "PRG?" and wait
+			set temp to answer
+			ask "CHR?" and wait
+			unpack ROM with (temp) banks of PRG-ROM and (answer) banks of CHR-ROM
+		end
+	end
+end
+
 define-atomic unpack ROM with (N) banks of PRG-ROM and (P) banks of CHR-ROM
 set temp to 17
 delete all of PRG-ROM
