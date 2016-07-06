@@ -25,6 +25,7 @@ repeat (N*16384)
 end
 repeat (P*8192)
     add item temp of iNES ROM to CHR-ROM
+    change temp by 1
 end
 format prg
 format chr
