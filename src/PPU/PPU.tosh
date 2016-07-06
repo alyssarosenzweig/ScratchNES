@@ -75,7 +75,7 @@ when q key pressed
 emulate frame
 
 define-atomic VBlank
-set PPU vblank?111211111 to 1
+set PPU vblank to 1
 if PPU generate NMI = 1 then
 	interrupt: vector "0xFFFA"
 end
@@ -178,9 +178,9 @@ hide
 
 define-atomic read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank?111211111 + 64 * PPU sprite 0?111211111 + 32 * PPU sprite overflow?111211111
+	set M to 128 * PPU vblank + 64 * PPU sprite 0 + 32 * PPU sprite overflow
 	set PPU address latch to 0
-	set PPU vblank?111211111 to 0
+	set PPU vblank to 0
 else
 	if N = 7 then
 		read PPU memory
