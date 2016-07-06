@@ -47,6 +47,13 @@ if answer = "format chr" then
 else
 	if answer = "format prg" then
 		format prg
+	else
+		if answer = "irom" then
+			ask "PRG?" and wait
+			set temp to answer
+			ask "CHR?" and wait
+			unpack ROM (temp) banks PRG-ROM and (answer) banks CHR-ROM
+		end
 	end
 end
 
@@ -68,7 +75,7 @@ when q key pressed
 emulate frame
 
 define-atomic VBlank
-set PPU vblank?11121111 to 1
+set PPU vblank?111211111 to 1
 if PPU generate NMI = 1 then
 	interrupt: vector "0xFFFA"
 end
@@ -158,7 +165,7 @@ repeat 256
 end
 delete all of Nametables
 repeat 960
-	add "36" to Nametables
+	add "0x24" to Nametables
 end
 repeat 2048 - 960
 	add "0" to Nametables
@@ -171,9 +178,9 @@ hide
 
 define-atomic read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank?11121111 + 64 * PPU sprite 0?11121111 + 32 * PPU sprite overflow?11121111
+	set M to 128 * PPU vblank?111211111 + 64 * PPU sprite 0?111211111 + 32 * PPU sprite overflow?111211111
 	set PPU address latch to 0
-	set PPU vblank?11121111 to 0
+	set PPU vblank?111211111 to 0
 else
 	if N = 7 then
 		read PPU memory
