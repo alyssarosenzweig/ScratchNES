@@ -3,7 +3,7 @@ set M to item 1 of controller 1 state * 1
 delete 1 of controller 1 state
 
 define controller strobe (value)
-if controller strobe = 1 and value = 0 then
+if controller strobe mod 2 = 1 and value mod 2 = 0 then
     delete all of controller 1 state
     add <key z pressed?> to controller 1 state
     add <key x pressed?> to controller 1 state
