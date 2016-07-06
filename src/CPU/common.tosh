@@ -1,54 +1,65 @@
 define ; [comment]
 
 define-atomic format prg
+format prg 128
+
+define-atomic format prg 128
 delete all of oPRG
 set tmp to 1
 repeat 16384
-    add (join "0x" (item tmp of PRG-ROM)) to oPRG
-    change tmp by 1
+	add (join "0x" (item tmp of PRG-ROM)) to oPRG
+	change tmp by 1
 end
 set tmp to 1
 repeat 16384
-    add (join "0x" (item tmp of PRG-ROM)) to oPRG
-    change tmp by 1
+	add (join "0x" (item tmp of PRG-ROM)) to oPRG
+	change tmp by 1
+end
+
+define-atomic format prg 256
+delete all of oPRG
+set tmp to 1
+repeat 32768
+	add (join "0x" (item tmp of PRG-ROM)) to oPRG
+	change tmp by 1
 end
 
 define-atomic mapper read (addr)
 if addr > 32767 then
-    set M to item (addr - 32767) of oPRG
+	set M to item (addr - 32767) of oPRG
 else
-    if addr < 8192 then
-        set M to item (addr mod 2048 + 1) of RAM
-    else
-        if addr > 8192 and addr < 8200 then
-            read PPU register (addr - 8192)
-        else
-            if addr = 16406 then
-                read controller 1
-            end
-        end
-    end
+	if addr < 8192 then
+		set M to item (addr mod 2048 + 1) of RAM
+	else
+		if addr > 8192 and addr < 8200 then
+			read PPU register (addr - 8192)
+		else
+			if addr = 16406 then
+				read controller 1
+			end
+		end
+	end
 end
 
 define-atomic mapper write (addr) (value)
 if addr < 8192 then
-    replace item addr mod 2048 + 1 of RAM with value
+	replace item addr mod 2048 + 1 of RAM with value
 else
-    if addr > 8191 and addr < 8200 then
-        write PPU register (addr - 8192) value:  (value)
-    else
-        if addr = 16406 then
-            controller strobe (value)
-        else
-            if addr = 16404 then
-                OAM DMA (value)
-            else
-                if addr > 32768 then
-                    say "Writing to ROM isn't very nice, you know..."
-                end
-            end
-        end
-    end
+	if addr > 8191 and addr < 8200 then
+		write PPU register (addr - 8192) value:  (value)
+	else
+		if addr = 16406 then
+			controller strobe (value)
+		else
+			if addr = 16404 then
+				OAM DMA (value)
+			else
+				if addr > 32768 then
+					say "Writing to ROM isn't very nice, you know..."
+				end
+			end
+		end
+	end
 end
 
 define-atomic PLP
@@ -85,7 +96,7 @@ mapper read 65533
 change PC by M * 256
 delete all of RAM
 repeat 2048
-    add "0" to RAM
+	add "0" to RAM
 end
 initialize PPU
 
@@ -98,25 +109,33 @@ emulate frame
 emulate frame
 emulate frame
 set line to 0
+show variable PC
 show variable opcode
 reset timer
 forever
-    emulate frame
-    skip frame
-    skip frame
-    skip frame
-    skip frame
-    skip frame
-    skip frame
-    change line by 7
-    set opcode to line / timer
+	emulate frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	skip frame
+	change line by 12
+	set opcode to line / timer
 end
 
 define-atomic step CPU
 if PC > 32767 then
-    set M to item (PC - 32767) of oPRG
+	set M to item (PC - 32767) of oPRG
 else
-    if PC < 8192 then
-        set M to item (PC mod 2048 + 1) of RAM
-    end
+	if PC < 8192 then
+		set M to item (PC mod 2048 + 1) of RAM
+	end
 end
