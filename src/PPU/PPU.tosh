@@ -52,7 +52,7 @@ else
 			ask "PRG?" and wait
 			set temp to answer
 			ask "CHR?" and wait
-			unpack ROM (temp) banks PRG-ROM and (answer) banks CHR-ROM
+			unpack ROM with (temp) banks of PRG-ROM and (answer) banks of CHR-ROM
 		end
 	end
 end
