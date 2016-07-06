@@ -1,2 +1,6 @@
 mapper read PC+1
-set address to (M + X) mod 256
+set temp to M
+mapper read (temp + X) mod 256
+set tmp to M
+mapper read (temp + X + 1) mod 256
+set address to (M*256) + tmp
