@@ -141,7 +141,7 @@ var sources = table.map(function(x, i) {
 });
 
 // dump out an 8 level deep BST
-console.log(common.toString() + bst(sources, 0, 255).join('\n'));
+console.log(bst(sources, 0, 255).join('\n'));
 
 function bst(sources, start, end) {
     if(start == end)
