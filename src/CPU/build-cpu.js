@@ -140,8 +140,6 @@ var sources = table.map(function(x, i) {
     }
 });
 
-// dump common code
-var common = fs.readFileSync("common.tosh");
 // dump out an 8 level deep BST
 console.log(common.toString() + bst(sources, 0, 255).join('\n'));
 
