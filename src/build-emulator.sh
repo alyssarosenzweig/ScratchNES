@@ -1,5 +1,5 @@
 #!/bin/sh
-cat CPU/debug.tosh
+cat CPU/common.tosh
 echo ""
 cd CPU ; node build-cpu.js > ../CPU.tosh ; cd ..
 cat CPU.tosh
