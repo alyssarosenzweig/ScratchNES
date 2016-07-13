@@ -63,7 +63,6 @@ else
 end
 
 define-atomic PLP
-set M to item M+1 of hex
 set flagN to <item ((join join "0x" (letter 1 of M) "8") + 1) of AND = 8>
 set flagV to <item ((join join "0x" (letter 1 of M) "4") + 1) of AND = 4>
 set flagB to <item ((join join "0x" (letter 1 of M) "1") + 1) of AND = 1>

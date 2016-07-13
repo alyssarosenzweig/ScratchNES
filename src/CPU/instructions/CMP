@@ -1,4 +1,4 @@
 R
 set flagC to <not A < OP>
 set flagZ to <A = OP>
-set flagN to <(A + (256 - OP)) mod 256 > 127>
+set flagN to <((A + (256 - OP)) mod 256) > 127>
