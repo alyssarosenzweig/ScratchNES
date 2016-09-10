@@ -20,8 +20,8 @@ function emit(register, name, value) {
         emission.push("RW, N, Z, OP");
         emission.push("set OP to (OP + " + value + ") mod 256");
     } else {
-        emission.push("IMPLIED," + register + ",N,Z," + register);
-        emission.push("set " + register + " to (" + register + " + " value + ") mod 256");
+        emission.push("IMPLIED,N,Z," + register);
+        emission.push("set " + register + " to (" + register + " + " + value + ") mod 256");
     }
 
     fs.writeFileSync("instructions/" + name, emission.join("\n"));
