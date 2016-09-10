@@ -181,7 +181,6 @@ end
 define-atomic write PPU register (N) value: (V)
 if N = 0 then
 	set mask to item (1 + V) of bitmask
-	ask mask and wait
 	set PPU base nametable address to 8192 + ((2 * letter 7 of mask + letter 8 of mask) * 1024)
 	set PPU VRAM increment to letter 6 of mask * 31 + 1
 	set PPU Sprite pattern table to letter 5 of mask * 4096
