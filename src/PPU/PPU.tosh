@@ -3,6 +3,7 @@ delete all of secondary OAM
 delete all of evaluation line
 delete all of secondary bitmaps
 delete all of secondary Xt
+delete all of sprite 0
 repeat 32
 	add "255" to secondary OAM
 	add "-1" to evaluation line
@@ -30,6 +31,7 @@ repeat 64
 		get pattern tile:  (item (evaluation n + 1) of OAM) scanline:  (mY - item evaluation n of OAM) table:  (PPU Sprite pattern table)
 		add mask to secondary bitmaps
 		add temp - 3 to secondary Xt
+                add <evaluation n = 1> to sprite 0
 		change evaluation slot by 1
 	end
 	change evaluation n by 4
@@ -92,6 +94,7 @@ go to x: -128 y: 128
 set mY to -1
 set adjacent count to 0
 set adjacent color to -1
+set PPU sprite 0 to 0
 repeat 224
 	change mY by 1
 	evaluate sprites scanline:  (mY)
@@ -113,6 +116,7 @@ repeat 224
 				if item (mX + 1) of evaluation line < 1 then
 					set color to item (BG: Palette + letter (2 + mX mod 8) of BG: Plane 0) of Palette
 				else
+                                        change PPU sprite 0 by item item (mX + 1) of evaluation line of sprite 0
 					set tmp to letter (mX - item item (mX + 1) of evaluation line of secondary Xt) of item item (mX + 1) of evaluation line of secondary bitmaps
 					if tmp = 0 then
 						set color to item (BG: Palette + letter (2 + mX mod 8) of BG: Plane 0) of Palette
@@ -167,7 +171,7 @@ hide
 
 define-atomic read PPU register (N)
 if N = 2 then
-	set M to 128 * PPU vblank + 64 * PPU sprite 0 + 32 * PPU sprite overflow
+	set M to 128 * PPU vblank + 64 * <PPU sprite 0 > 0> + 32 * PPU sprite overflow
 	set PPU address latch to 0
 	; "set PPU vblank to 0"
 else
