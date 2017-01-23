@@ -271,13 +271,13 @@ define-atomic read PPU memory @ [VRAM address]
 if VRAM address < 32 * 256 then
 	set M to item (1 + VRAM address) of CHR-ROM
 else
-	if PPU VRAM address < 48 * 256 then
+	if VRAM address < 48 * 256 then
 		set M to item (VRAM address - 8191) of Nametables
 	else
-		if PPU VRAM address < 63 * 256 then
+		if VRAM address < 63 * 256 then
 			set M to item (VRAM address - 12287) of Nametables
 		else
-			if PPU VRAM address < 64 * 256 then
+			if VRAM address < 64 * 256 then
 				set M to item (VRAM address mod 32 + 1) of Palette
 			else
 				; "TODO: PPU memory mirroring"
@@ -311,7 +311,19 @@ else
 			replace item PPU VRAM address - 12287 of Nametables with V
 		else
 			if PPU VRAM address < 64 * 256 then
-				replace item PPU VRAM address mod 32 + 1 of Palette with item (V + 1) of RGB
+				if PPU VRAM address mod 32 = 0 or <<PPU VRAM address < 16145> and <(PPU VRAM address - 1) mod 4 = 0>> then
+					set temp to item (V + 1) of RGB
+					replace item 1 of Palette with temp
+					replace item 5 of Palette with temp
+					replace item 9 of Palette with temp
+					replace item 13 of Palette with temp
+					replace item 17 of Palette with temp
+					replace item 21 of Palette with temp
+					replace item 25 of Palette with temp
+					replace item 29 of Palette with temp
+				else
+					replace item PPU VRAM address mod 32 + 1 of Palette with item (V + 1) of RGB
+				end
 			else
 				; "TODO: PPU memory mirroring"
 				ask V and wait
